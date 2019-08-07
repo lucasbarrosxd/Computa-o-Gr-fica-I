@@ -1,0 +1,2 @@
+class Light:
+    pass
