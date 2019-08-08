@@ -13,7 +13,10 @@ class Vector:
 
     @dx.setter
     def dx(self, value):
-        self.dx = value
+        if self.dy != 0 or self.dz!=0 :
+            self.dx = value
+        else:
+            raise ValueError("Vector cannot have all values equal to zero.")
 
     @property
     def dy(self):
@@ -21,7 +24,10 @@ class Vector:
 
     @dy.setter
     def dy(self, value):
-        self.dy = value
+        if self.dz != 0 or self.dx != 0:
+            self.dy = value
+        else:
+            raise ValueError("Vector cannot have all values equal to zero.")
 
     @property
     def dz(self):
@@ -29,7 +35,10 @@ class Vector:
 
     @dz.setter
     def dz(self, value):
-        self.dz = value
+        if self.dy != 0 or self.dx != 0:
+            self.dz = value
+        else:
+            raise ValueError("Vector cannot have all values equal to zero.")
 
     def norm(self):
         return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
