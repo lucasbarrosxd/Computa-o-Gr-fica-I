@@ -6,3 +6,6 @@ class Vector:
         self.dx = dx
         self.dy = dy
         self.dz = dz
+
+    def norm(self):
+        return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
