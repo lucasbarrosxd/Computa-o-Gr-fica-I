@@ -30,6 +30,3 @@ class Point:
     @z.setter
     def z(self, value):
         self.z = value
-        
-    
-    
