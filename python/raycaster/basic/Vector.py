@@ -6,6 +6,30 @@ class Vector:
         self.dx = dx
         self.dy = dy
         self.dz = dz
+    
+    @property
+    def dx(self):
+        return self.dx
+
+    @dx.setter
+    def dx(self, value):
+        self.dx = value
+
+    @property
+    def dy(self):
+        return self.dy
+
+    @dy.setter
+    def dy(self, value):
+        self.dy = value
+
+    @property
+    def dz(self):
+        return self.dz
+
+    @dz.setter
+    def dz(self, value):
+        self.dz = value
 
     def norm(self):
         return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
