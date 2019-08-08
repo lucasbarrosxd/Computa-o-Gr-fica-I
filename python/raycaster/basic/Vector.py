@@ -42,3 +42,7 @@ class Vector:
 
     def norm(self):
         return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
+
+class helper:
+    def scalar(self, vector1, vector2):
+        return None
