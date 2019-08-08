@@ -6,6 +6,9 @@ class Vector:
         self.dx = dx
         self.dy = dy
         self.dz = dz
+
+    def __str__(self):
+        return "({0}, {1}, {2})".format(self.dx, self.dy, self.dz)
     
     @property
     def dx(self):
@@ -50,3 +53,16 @@ class Helper:
         if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
             raise TypeError("Arguments must be of type 'Vector'.")
         return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
+
+    @staticmethod
+    def vectorial(vector1, vector2):
+        if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
+            raise TypeError("Arguments must be of type 'Vector'.")
+        try:
+            return Vector(
+                vector1.dy * vector2.dz - vector1.dz * vector2.dy,
+                vector1.dz * vector2.dx - vector1.dx * vector2.dz,
+                vector1.dx * vector2.dy - vector1.dy * vector2.dx
+            )
+        except ValueError:
+            pass
