@@ -59,7 +59,7 @@ class Vector:
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para adição com objetos de tipo '{1}'."
-                    .format(self.__class__.__name__, type(other))
+                .format(self.__class__.__name__, type(other))
             )
 
     def __radd__(self, other):
@@ -74,13 +74,16 @@ class Vector:
         # Argumento é um vetor.
         if isinstance(other, Vector):
             # Produto escalar de dois vetores.
-            pass
+            return scalar_prod(self, other)
         # Argumento é um número.
         elif isinstance(other, (int, float, complex)) and not isinstance(other, bool):
             # Produto de um escalar por um vetor.
-            pass
+            return Vector(self.dx * other, self.dy * other, self.dz * other)
         else:
-            raise TypeError("Type 'Vector' does not support multiplication on type {0}".format(type(other)))
+            raise TypeError(
+                "Classe '{0}' não possui suporte para multiplicação com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
 
     def __rmul__(self, other):
         # Delegar para outro método.
@@ -91,8 +94,34 @@ class Vector:
         self.__mul__(other)
 
     def __truediv__(self, other):
+        # Argumento é um número.
         if isinstance(other, (int, float, complex)) and not isinstance(other, bool):
-            pass
+            # Divisão de um vetor por um escalar.
+            return Vector(self.dx / other, self.dy / other, self.dz / other)
+        else:
+            raise TypeError(
+                "Classe '{0}' não possui suporte para divisão com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
+
+    def __itruediv__(self, other):
+        # Delegar para outro método.
+        self.__truediv__(other)
+
+    def __mod__(self, other):
+        # Argumento é um vetor.
+        if isinstance(other, Vector):
+            # Produto vetorial de dois vetores.
+            return cross_prod(self, other)
+        else:
+            raise TypeError(
+                "Classe '{0}' não possui suporte para produto vetorial com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
+
+    def __imod__(self, other):
+        # Delegar para outro método.
+        self.__mod__(other)
 
     def norm(self):
         return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
@@ -101,10 +130,11 @@ class Vector:
 def scalar_prod(vector1, vector2):
     if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
         raise TypeError("Arguments must be of type 'Vector'.")
+
     return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
 
 
-def vectorial_prod(vector1, vector2):
+def cross_prod(vector1, vector2):
     if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
         raise TypeError("Arguments must be of type 'Vector'.")
     try:
