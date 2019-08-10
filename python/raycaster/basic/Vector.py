@@ -1,8 +1,19 @@
 class Vector:
     def __init__(self, dx, dy, dz):
-        self.dx = dx
-        self.dy = dy
-        self.dz = dz
+        if not (isinstance(dx, (int, float, complex)) and not isinstance(dx, bool)):
+            raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
+        if not (isinstance(dy, (int, float, complex)) and not isinstance(dy, bool)):
+            raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
+        if not (isinstance(dz, (int, float, complex)) and not isinstance(dz, bool)):
+            raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
+
+        # Checar se o vetor está sendo definido como (0, 0, 0).
+        if dx == 0 and dy == 0 and dz == 0:
+            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
+
+        self._dx = dx
+        self._dy = dy
+        self._dz = dz
     
     @property
     def dx(self):
@@ -14,7 +25,7 @@ class Vector:
             raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
 
         # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self._dy == 0 and self._dz == 0:
+        if value == 0 and self.dy == 0 and self.dz == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
 
         self._dx = value
@@ -29,7 +40,7 @@ class Vector:
             raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
 
         # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self._dz == 0 and self._dx == 0:
+        if value == 0 and self.dz == 0 and self.dx == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
 
         self._dy = value
@@ -44,19 +55,19 @@ class Vector:
             raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
 
         # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self._dx == 0 and self._dy == 0:
+        if value == 0 and self.dx == 0 and self.dy == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
 
         self._dz = value
 
     def __str__(self):
-        return "({0}, {1}, {2})".format(self._dx, self._dy, self._dz)
+        return "({0}, {1}, {2})".format(self.dx, self.dy, self.dz)
 
     def __add__(self, other):
         # Argumento é um vetor.
         if isinstance(other, Vector):
             # Adição de dois vetores.
-            return Vector(self._dx + other.dx, self._dy + other.dy, self._dz + other.dz)
+            return Vector(self.dx + other.dx, self.dy + other.dy, self.dz + other.dz)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para adição com objetos de tipo '{1}'."
@@ -79,7 +90,7 @@ class Vector:
         # Argumento é um número.
         elif isinstance(other, (int, float, complex)) and not isinstance(other, bool):
             # Produto de um escalar por um vetor.
-            return Vector(self._dx * other, self._dy * other, self._dz * other)
+            return Vector(self.dx * other, self.dy * other, self.dz * other)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para multiplicação com objetos de tipo '{1}'."
@@ -98,7 +109,7 @@ class Vector:
         # Argumento é um número.
         if isinstance(other, (int, float, complex)) and not isinstance(other, bool):
             # Divisão de um vetor por um escalar.
-            return Vector(self._dx / other, self._dy / other, self._dz / other)
+            return Vector(self.dx / other, self.dy / other, self.dz / other)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para divisão com objetos de tipo '{1}'."
@@ -125,7 +136,7 @@ class Vector:
         self.__pow__(other)
 
     def norm(self):
-        return (self._dx ** 2 + self._dy ** 2 + self._dz ** 2) ** 0.5
+        return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
 
 
 def scalar_prod(vector1, vector2):

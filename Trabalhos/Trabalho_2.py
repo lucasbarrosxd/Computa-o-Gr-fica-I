@@ -4,11 +4,12 @@ Trabalho 2 - 08/08/2019
 Dados um Cilindro C (P0, P1, r) e uma reta R (Pr, v), calcular o(s) ponto(s) P de interseção.
 """
 
-# Imports locais.
-from python.raycaster.basic import Line
+# Imports arquivos do projeto.
+from python.raycaster.basic import Point, Vector, Line
 from python.raycaster.object import Cylinder
-
+# Importar bibliotecas.
 import math
+import unittest
 
 """
 SOLUÇÃO:
@@ -113,8 +114,8 @@ def solve(cylinder, line):
                 return None
         else:
             # Há duas interseções possíveis.
-            t1 = t + math.sqrt(delta)
-            t2 = t - math.sqrt(delta)
+            t1 = t - math.sqrt(delta)
+            t2 = t + math.sqrt(delta)
 
             s1 = (t1 * (v * u) - (w * u)) / (u * u)
             s2 = (t2 * (v * u) - (w * u)) / (u * u)
@@ -131,3 +132,25 @@ def solve(cylinder, line):
             else:
                 # Nenhuma das interseções são válidas.
                 return None
+
+
+class Tests(unittest.TestCase):
+    def test_1(self):
+        cyli = Cylinder(Point(0, 0, 0), Point(0, 5, 0), 1)
+        line = Line(Point(-2, 1, 0), Vector(1, 0, 0))
+
+        p1, p2 = solve(cyli, line)
+
+        # Validar p1
+        self.assertAlmostEqual(p1.x, -1)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+        # Validar p2
+        self.assertAlmostEqual(p2.x, 1)
+        self.assertAlmostEqual(p2.y, 1)
+        self.assertAlmostEqual(p2.z, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()

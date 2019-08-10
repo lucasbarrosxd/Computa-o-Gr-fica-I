@@ -32,7 +32,7 @@ class Point:
 
     @property
     def z(self):
-        return self._y
+        return self._z
 
     @z.setter
     def z(self, value):
