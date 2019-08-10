@@ -4,7 +4,7 @@ Trabalho 2 - 08/08/2019
 Dados um Cilindro C (P0, P1, r) e uma reta R (Pr, v), calcular o(s) ponto(s) P de interseção.
 """
 
-# Imports arquivos do projeto.
+# Importar arquivos do projeto.
 from python.raycaster.basic import Point, Vector, Line
 from python.raycaster.object import Cylinder
 # Importar bibliotecas.
