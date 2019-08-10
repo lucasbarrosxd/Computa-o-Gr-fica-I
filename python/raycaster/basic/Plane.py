@@ -1,18 +1,13 @@
 # Importar arquivos do mesmo pacote.
-from . import *
-
+from . import Point, Vector, Line
+# Importar bibliotecas.
 import math
 
 
 class Plane:
     def __init__(self, origin, normal):
-        if not isinstance(origin, Point):
-            raise TypeError("Argumento 'origin' deve ser do tipo 'Point'.")
-        if not isinstance(normal, Vector):
-            raise TypeError("Argumento 'normal' deve ser do tipo 'Vector'.")
-
-        self._origin = origin
-        self._normal = normal
+        self.origin = origin
+        self.normal = normal
 
     @property
     def origin(self):
@@ -21,7 +16,8 @@ class Plane:
     @origin.setter
     def origin(self, value):
         if not isinstance(value, Point):
-            raise TypeError("Argumento 'origin' deve ser do tipo 'Point'.")
+            raise TypeError("Parâmetro 'origin' deve ser do tipo 'Point'.")
+
         self._origin = value
 
     @property
@@ -31,7 +27,8 @@ class Plane:
     @normal.setter
     def normal(self, value):
         if not isinstance(value, Vector):
-            raise TypeError("Argumento 'normal' deve ser do tipo 'Vector'.")
+            raise TypeError("Parâmetro 'normal' deve ser do tipo 'Vector'.")
+
         self._normal = value
 
     def __str__(self):

@@ -1,19 +1,15 @@
 # Importar arquivos do mesmo pacote.
-from . import *
-
+from . import Object
+# Importar arquivos do projeto.
 from python.raycaster.basic import *
+# Imporar bibliotecas.
 import math
 
 
 class Sphere(Object):
     def __init__(self, center, radius):
-        if not isinstance(center, Point):
-            raise TypeError()
-        if not (isinstance(radius, (int, float, complex)) and not isinstance(radius, bool)):
-            raise TypeError()
-
-        self._center = center
-        self._radius = radius
+        self.center = center
+        self.radius = radius
 
     @property
     def center(self):

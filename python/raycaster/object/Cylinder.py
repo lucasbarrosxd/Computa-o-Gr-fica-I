@@ -1,9 +1,7 @@
 # Importar arquivos do mesmo pacote.
-from . import *
-# Imports locais
+from . import Object
+# Importar arquivos do projeto.
 from python.raycaster.basic import *
-# Imports de bibliotecas
-import math
 
 
 class Cylinder(Object):
@@ -44,6 +42,3 @@ class Cylinder(Object):
             raise TypeError("Argumento 'radius' deve ser de tipo numérico.")
 
         self._radius = value
-
-    def intersection(self, line):
-

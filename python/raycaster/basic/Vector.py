@@ -1,16 +1,8 @@
-# Importar arquivos do mesmo pacote.
-from . import *
-
-
 class Vector:
     def __init__(self, dx, dy, dz):
-        # Checar se o vetor está sendo definido como (0, 0, 0).
-        if dx == dy == dz == 0:
-            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-
-        self._dx = dx
-        self._dy = dy
-        self._dz = dz
+        self.dx = dx
+        self.dy = dy
+        self.dz = dz
     
     @property
     def dx(self):
@@ -18,11 +10,14 @@ class Vector:
 
     @dx.setter
     def dx(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
+
         # Checar se o vetor está sendo definido como (0, 0, 0).
         if value == 0 and self._dy == 0 and self._dz == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-        else:
-            self._dx = value
+
+        self._dx = value
 
     @property
     def dy(self):
@@ -30,11 +25,14 @@ class Vector:
 
     @dy.setter
     def dy(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
+
         # Checar se o vetor está sendo definido como (0, 0, 0).
         if value == 0 and self._dz == 0 and self._dx == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-        else:
-            self._dy = value
+
+        self._dy = value
 
     @property
     def dz(self):
@@ -42,11 +40,14 @@ class Vector:
 
     @dz.setter
     def dz(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
+
         # Checar se o vetor está sendo definido como (0, 0, 0).
         if value == 0 and self._dx == 0 and self._dy == 0:
             raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-        else:
-            self._dz = value
+
+        self._dz = value
 
     def __str__(self):
         return "({0}, {1}, {2})".format(self._dx, self._dy, self._dz)
@@ -128,15 +129,20 @@ class Vector:
 
 
 def scalar_prod(vector1, vector2):
-    if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
-        raise TypeError("Arguments must be of type 'Vector'.")
+    if not isinstance(vector1, Vector):
+        raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
+    if not isinstance(vector2, Vector):
+        raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
 
     return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
 
 
 def cross_prod(vector1, vector2):
-    if not isinstance(vector1, Vector) or not isinstance(vector2, Vector):
-        raise TypeError("Arguments must be of type 'Vector'.")
+    if not isinstance(vector1, Vector):
+        raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
+    if not isinstance(vector2, Vector):
+        raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
+
     try:
         return Vector(
             vector1.dy * vector2.dz - vector1.dz * vector2.dy,
@@ -144,4 +150,5 @@ def cross_prod(vector1, vector2):
             vector1.dx * vector2.dy - vector1.dy * vector2.dx
         )
     except ValueError:
-        pass
+        # Vetores são colineares, logo não existe produto vetorial.
+        return None

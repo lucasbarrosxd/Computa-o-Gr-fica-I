@@ -1,15 +1,11 @@
 # Importar arquivos do mesmo pacote.
-from . import *
+from . import Point, Vector
 
 
 class Line:
     def __init__(self, origin, direction):
-        if not isinstance(origin, Point):
-            raise TypeError("Argumento 'origin' deve ser do tipo 'Point'.")
-        if not isinstance(direction, Vector):
-            raise TypeError("Argumento 'direction' deve ser do tipo 'Vector'.")
-        self._origin = origin
-        self._direction = direction
+        self.origin = origin
+        self.direction = direction
 
     @property
     def origin(self):
@@ -18,7 +14,8 @@ class Line:
     @origin.setter
     def origin(self, value):
         if not isinstance(value, Point):
-            raise TypeError("Argumento 'origin' deve ser do tipo 'Point'.")
+            raise TypeError("Parâmetro 'origin' deve ser de tipo 'Point'.")
+
         self._origin = value
 
     @property
@@ -28,7 +25,8 @@ class Line:
     @direction.setter
     def direction(self, value):
         if not isinstance(value, Vector):
-            raise TypeError("Argumento 'direction' deve ser do tipo 'Vector'.")
+            raise TypeError("Parâmetro 'direction' deve ser de tipo 'Vector'.")
+
         self._direction = value
 
     def __str__(self):

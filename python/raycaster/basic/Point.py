@@ -1,12 +1,12 @@
 # Importar arquivos do mesmo pacote.
-from . import *
+from .Vector import *
 
 
 class Point:
     def __init__(self, x, y, z):
-        self._x = x
-        self._y = y
-        self._z = z
+        self.x = x
+        self.y = y
+        self.z = z
 
     @property
     def x(self):
@@ -14,6 +14,9 @@ class Point:
 
     @x.setter
     def x(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'x' deve ser de tipo numérico.")
+
         self._x = value
 
     @property
@@ -22,6 +25,9 @@ class Point:
 
     @y.setter
     def y(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'y' deve ser de tipo numérico.")
+
         self._y = value
 
     @property
@@ -30,6 +36,9 @@ class Point:
 
     @z.setter
     def z(self, value):
+        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
+            raise TypeError("Parâmetro 'z' deve ser de tipo numérico.")
+
         self._z = value
 
     def __str__(self):
