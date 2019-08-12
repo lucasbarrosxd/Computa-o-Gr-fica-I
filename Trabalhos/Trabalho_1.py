@@ -28,15 +28,15 @@ OP2:
     P = O + s * w, onde s é um coeficiente qualquer para se determinar um ponto sobre a reta.
 (2) P = s * w
 
-    Outra informação que nós temos é que o segmento P1P2 é perpendicular ao vetor v:
+Outra informação que nós temos é que o segmento P1P2 é perpendicular ao vetor v:
 
 (3) P1P2.v = 0
 
-    E finalmente, o tamanho do segmento P1P2 é igual a L:
+E finalmente, o tamanho do segmento P1P2 é igual a L:
     
 (4) ||P1P2|| = L
 
-    Podemos começar desenvolvendo (3) e (4), pois são as equações que contém informações sobre os dois pontos:
+Podemos começar desenvolvendo (3) e (4), pois são as equações que contém informações sobre os dois pontos:
     
 (3) P1P2.v = 0
     (P2 - P1).v = 0
@@ -161,25 +161,75 @@ class Tests(unittest.TestCase):
         v = Vector(1, 1, 0)
         w = Vector(1, 0, 0)
 
-        pair1, pair2 = solve(v, w, 10)
-        p1, p2 = pair1
-        p3, p4 = pair2
+        (pv1, pw1), (pv2, pw2) = solve(v, w, 10)
 
-        self.assertAlmostEqual(p1.x, 5 * math.sqrt(2))
-        self.assertAlmostEqual(p1.y, 5 * math.sqrt(2))
-        self.assertAlmostEqual(p1.z, 0)
+        self.assertAlmostEqual(pv1.x, 5 * math.sqrt(2))
+        self.assertAlmostEqual(pv1.y, 5 * math.sqrt(2))
+        self.assertAlmostEqual(pv1.z, 0)
 
-        self.assertAlmostEqual(p2.x, 10 * math.sqrt(2))
-        self.assertAlmostEqual(p2.y, 0)
-        self.assertAlmostEqual(p2.z, 0)
+        self.assertAlmostEqual(pw1.x, 10 * math.sqrt(2))
+        self.assertAlmostEqual(pw1.y, 0)
+        self.assertAlmostEqual(pw1.z, 0)
 
-        self.assertAlmostEqual(p3.x, -5 * math.sqrt(2))
-        self.assertAlmostEqual(p3.y, -5 * math.sqrt(2))
-        self.assertAlmostEqual(p3.z, 0)
+        self.assertAlmostEqual(pv2.x, -5 * math.sqrt(2))
+        self.assertAlmostEqual(pv2.y, -5 * math.sqrt(2))
+        self.assertAlmostEqual(pv2.z, 0)
 
-        self.assertAlmostEqual(p4.x, -10 * math.sqrt(2))
-        self.assertAlmostEqual(p4.y, 0)
-        self.assertAlmostEqual(p4.z, 0)
+        self.assertAlmostEqual(pw2.x, -10 * math.sqrt(2))
+        self.assertAlmostEqual(pw2.y, 0)
+        self.assertAlmostEqual(pw2.z, 0)
+
+    def test_2(self):
+        v = Vector(1, 0, 0)
+        w = Vector(2, 0, 0)
+
+        result = solve(v, w, 1)
+
+        self.assertIsNone(result)
+
+    def test_3(self):
+        v = Vector(1, 0, 0)
+        w = Vector(0, 1, 0)
+
+        (pv1, pw1), (pv2, pw2) = solve(v, w, 100)
+
+        self.assertAlmostEqual(pv1.x, 0)
+        self.assertAlmostEqual(pv1.y, 0)
+        self.assertAlmostEqual(pv1.z, 0)
+
+        self.assertAlmostEqual(pw1.x, 0)
+        self.assertAlmostEqual(pw1.y, 100)
+        self.assertAlmostEqual(pw1.z, 0)
+
+        self.assertAlmostEqual(pv2.x, 0)
+        self.assertAlmostEqual(pv2.y, 0)
+        self.assertAlmostEqual(pv2.z, 0)
+
+        self.assertAlmostEqual(pw2.x, 0)
+        self.assertAlmostEqual(pw2.y, -100)
+        self.assertAlmostEqual(pw2.z, 0)
+
+    def test_4(self):
+        v = Vector(3, 4, 0)
+        w = Vector(1, 0, 0)
+
+        (pv1, pw1), (pv2, pw2) = solve(v, w, 100)
+
+        self.assertAlmostEqual(pv1.x, 45)
+        self.assertAlmostEqual(pv1.y, 60)
+        self.assertAlmostEqual(pv1.z, 0)
+
+        self.assertAlmostEqual(pw1.x, 125)
+        self.assertAlmostEqual(pw1.y, 0)
+        self.assertAlmostEqual(pw1.z, 0)
+
+        self.assertAlmostEqual(pv2.x, -45)
+        self.assertAlmostEqual(pv2.y, -60)
+        self.assertAlmostEqual(pv2.z, 0)
+
+        self.assertAlmostEqual(pw2.x, -125)
+        self.assertAlmostEqual(pw2.y, 0)
+        self.assertAlmostEqual(pw2.z, 0)
 
 
 if __name__ == '__main__':
