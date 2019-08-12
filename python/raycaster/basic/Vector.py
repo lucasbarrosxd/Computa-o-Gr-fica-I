@@ -63,6 +63,16 @@ class Vector:
     def __str__(self):
         return "({0}, {1}, {2})".format(self.dx, self.dy, self.dz)
 
+    def __eq__(self, other):
+        # Argumento é um vetor.
+        if isinstance(other, Vector):
+            return (self.dx == other.dx) and (self.dy == other.dy) and (self.dz == other.dz)
+        else:
+            raise TypeError(
+                "Classe '{0}' não possui suporte para comparação com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
+
     def __add__(self, other):
         # Argumento é um vetor.
         if isinstance(other, Vector):
@@ -74,19 +84,33 @@ class Vector:
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __radd__(self, other):
-        # Delegar para outro método.
-        return self.__add__(other)
-
     def __iadd__(self, other):
         # Delegar para outro método.
         self.__add__(other)
+
+    def __sub__(self, other):
+        # Argumento é um vetor.
+        if isinstance(other, Vector):
+            # Subtração de dois vetores.
+            return Vector(self.dx - other.dx, self.dy - other.dy, self.dz - other.dz)
+        else:
+            raise TypeError(
+                "Classe '{0}' não possui suporte para subtração com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
+
+    def __isub__(self, other):
+        # Delegar para outro método.
+        self.__sub__(other)
+
+    def __neg__(self):
+        return Vector(- self.dx, - self.dy, - self.dz)
 
     def __mul__(self, other):
         # Argumento é um vetor.
         if isinstance(other, Vector):
             # Produto escalar de dois vetores.
-            return scalar_prod(self, other)
+            return Vector.scalar_prod(self, other)
         # Argumento é um número.
         elif isinstance(other, (int, float, complex)) and not isinstance(other, bool):
             # Produto de um escalar por um vetor.
@@ -124,7 +148,7 @@ class Vector:
         # Argumento é um vetor.
         if isinstance(other, Vector):
             # Produto vetorial de dois vetores.
-            return cross_prod(self, other)
+            return Vector.cross_prod(self, other)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para produto vetorial com objetos de tipo '{1}'."
@@ -138,28 +162,28 @@ class Vector:
     def norm(self):
         return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
 
+    @staticmethod
+    def scalar_prod(vector1, vector2):
+        if not isinstance(vector1, Vector):
+            raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
+        if not isinstance(vector2, Vector):
+            raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
 
-def scalar_prod(vector1, vector2):
-    if not isinstance(vector1, Vector):
-        raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
-    if not isinstance(vector2, Vector):
-        raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
+        return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
 
-    return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
+    @staticmethod
+    def cross_prod(vector1, vector2):
+        if not isinstance(vector1, Vector):
+            raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
+        if not isinstance(vector2, Vector):
+            raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
 
-
-def cross_prod(vector1, vector2):
-    if not isinstance(vector1, Vector):
-        raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
-    if not isinstance(vector2, Vector):
-        raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
-
-    try:
-        return Vector(
-            vector1.dy * vector2.dz - vector1.dz * vector2.dy,
-            vector1.dz * vector2.dx - vector1.dx * vector2.dz,
-            vector1.dx * vector2.dy - vector1.dy * vector2.dx
-        )
-    except ValueError:
-        # Vetores são colineares, logo não existe produto vetorial.
-        return None
+        try:
+            return Vector(
+                vector1.dy * vector2.dz - vector1.dz * vector2.dy,
+                vector1.dz * vector2.dx - vector1.dx * vector2.dz,
+                vector1.dx * vector2.dy - vector1.dy * vector2.dx
+            )
+        except ValueError:
+            # Vetores são colineares, logo não existe produto vetorial.
+            return None

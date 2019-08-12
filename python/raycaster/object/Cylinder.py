@@ -5,9 +5,9 @@ from python.raycaster.basic import *
 
 
 class Cylinder(Object):
-    def __init__(self, top, bottom, radius):
-        self.top = top
+    def __init__(self, bottom, top, radius):
         self.bottom = bottom
+        self.top = top
         self.radius = radius
 
     @property
@@ -42,3 +42,6 @@ class Cylinder(Object):
             raise TypeError("Argumento 'radius' deve ser de tipo numérico.")
 
         self._radius = value
+
+    def __str__(self):
+        return "P0: {0} P1: {1} r: {2}".format(self.bottom, self.top, self.radius)
