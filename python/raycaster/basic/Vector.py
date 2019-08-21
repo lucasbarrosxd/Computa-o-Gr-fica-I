@@ -1,19 +1,8 @@
 class Vector:
     def __init__(self, dx, dy, dz):
-        if not (isinstance(dx, (int, float, complex)) and not isinstance(dx, bool)):
-            raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
-        if not (isinstance(dy, (int, float, complex)) and not isinstance(dy, bool)):
-            raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
-        if not (isinstance(dz, (int, float, complex)) and not isinstance(dz, bool)):
-            raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
-
-        # Checar se o vetor está sendo definido como (0, 0, 0).
-        if dx == 0 and dy == 0 and dz == 0:
-            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-
-        self._dx = dx
-        self._dy = dy
-        self._dz = dz
+        self.dx = dx
+        self.dy = dy
+        self.dz = dz
     
     @property
     def dx(self):
@@ -23,10 +12,6 @@ class Vector:
     def dx(self, value):
         if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
             raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
-
-        # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self.dy == 0 and self.dz == 0:
-            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
 
         self._dx = value
 
@@ -39,10 +24,6 @@ class Vector:
         if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
             raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
 
-        # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self.dz == 0 and self.dx == 0:
-            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
-
         self._dy = value
 
     @property
@@ -53,10 +34,6 @@ class Vector:
     def dz(self, value):
         if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
             raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
-
-        # Checar se o vetor está sendo definido como (0, 0, 0).
-        if value == 0 and self.dx == 0 and self.dy == 0:
-            raise ValueError("Vetor não pode ter todos os valores iguais a zero.")
 
         self._dz = value
 
