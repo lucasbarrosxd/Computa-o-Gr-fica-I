@@ -1,0 +1,347 @@
+"""
+Trabalho 3 - 20/08/2019
+
+Dados uma Reta R = (Pr, v) e um Cone C = (P0, P1, r), calcular a(s) interseção(ões) entre os dois.
+"""
+
+# Importar arquivos do projeto.
+from python.raycaster.basic import Point, Vector, Line
+from python.raycaster.object import Cone
+# Importar bibliotecas.
+import math
+import unittest
+
+"""
+SOLUÇÂO:
+
+Uma reta pode ser representada por um Ponto Pr contido na reta e um vetor v que indica a direção da reta. Um cone pode
+ser representando por um Ponto P0 na sua base, um Ponto P1 no seu topo, e um valor r que indica o raio da base do cone.
+
+Queremos encontrar um ou mais pontos que estejam contidos na reta e na superfície do Cone. Podemos fazer similar ao
+cilindro, definindo um vetor u = P0P1 para o cone C:
+
+(1) P = Pr + t * v      // Equação da reta R.
+(2) P' = P0 + s * u     // Equação de reta do segmento P0P1.
+(3) PP'.u = 0           // Produto escalar de vetores perpendiculares.
+(*) 0 <= s <= 1         // Garantir que o ponto está no cone.
+
+Há uma equação que foi utilizada no cálculo da interseção de reta com cilindro que não utilizamos:
+
+    ||PP'|| = r
+
+Essa é a fórmula que utiliza a distância do centro do cilindro até suas laterais. Mas não podemos utilizá-la no
+cone, pois a distância entre o centro do cilindro e o ponto de interseção varia. Ainda assim, podemos encontrar uma
+nova fórmula para essa distância com outras informações: nós sabemos que na base do cilindro a distância é igual a r, e
+no topo do cilindro é igual a zero. Sabemos também que ela varia linearmente, logo podemos fazer:
+
+    ||P0P1|| / r = ||P'P1|| / ||PP'||     // Regra de três com os triângulos do cilindro.
+(4) ||PP'|| = r * ||P'P1|| / ||P0P1||
+
+Já temos todas as informações necessárias. Só precisamos desenvolver as equações em busca dos coeficientes t e s.
+
+(3):
+    PP'.u = 0
+    (P' - P).u = 0
+    ((P0 + s * u) - (Pr + t * v)).u = 0
+    ((P0 - Pr) + s * u - t * v).u = 0          // Igual ao cilindro, PrP0 = vetor w para facilitar.
+    w.u + s * u.u - t * v.u = 0
+    s = (t * v.u - w.u) / u.u
+
+Desenvolvemos (3) ao máximo, vamos para (4):
+
+(4):
+    ||PP'|| = r * ||P'P1|| / ||P0P1||
+    ||PP'|| = r * ||P1 - P'|| / ||P0P1||
+    ||PP'|| = r * ||P1 - (P0 + s * u)|| / ||P0P1||
+    ||PP'|| = r * ||(P1 - P0) - s * u|| / ||P0P1||
+    ||PP'|| = r * ||P0P1 - s * u|| / ||P0P1||
+    ||PP'|| = r * ||u - s * u|| / ||u||
+    ||PP'|| = r * |1 - s| * ||u|| / ||u||
+    ||PP'|| = r * |1 - s|
+
+Como queremos 0 <= s <= 1, temos que 0 <= 1 - s <= 1, logo |1 - s| = 1 - s.
+
+    ||PP'|| = r * (1 - s)
+    ||P' - P|| = r * (1 - s)
+    ||P0 + s * u - Pr - t * v|| = r * (1 - s)
+    (w + s * u - t * v).(w + s * u - t * v) = (r * (1 - s))²
+    w.w + s² * u.u + t² * v.v + 2s * w.u - 2t * w.v - 2ts * u.v = r² - 2r²s + r²s²
+    s² * (u.u - r²) + s * (2 * w.u - 2t * u.v + 2r²) + (w.w + t² * v.v - 2t * w.v - r²) = 0
+    
+    (t² * (v.u)² - 2t * (v.u) * (w.u) + (w.u)²) / (u.u)
+        - (t²r² * (v.u)² - 2tr² * (v.u) * (w.u) + r² * (w.u)²) / (u.u)²
+    + 2t * (v.u) * (w.u) / (u.u) - 2t² * (v.u)² / (u.u) + 2tr² * (v.u) / (u.u)
+        - 2 * (w.u)² / (u.u) + 2t * (u.v) * (w.u) / (u.u) - 2r² * (w.u) / (u.u)
+    + w.w + t² * v.v - 2t * w.v - r² = 0
+
+    t² * (
+        (v.u)² / (u.u)
+        - r² * (v.u)² / (u.u)²
+        - 2 * (v.u)² / (u.u)
+        + v.v
+    ) + t * (
+        - 2 * (v.u) * (w.u) / (u.u)
+        + 2r² * (v.u) * (w.u) / (u.u)²
+        + 2 * (v.u) * (w.u) / (u.u)
+        + 2r² * (v.u) / (u.u)
+        + 2 * (u.v) * (w.u) / (u.u)
+        - 2 * (w.v)
+    ) + (
+        (w.u)² / (u.u)
+        - r² * (w.u)² / (u.u)²
+        - 2 * (w.u)² / (u.u)
+        - 2r² * (w.u) / (u.u)
+        + w.w
+        - r²
+    ) = 0
+
+    t² * (
+        - r² * (v.u)²
+        - (v.u)² * (u.u)
+        + v.v * (u.u)²
+    ) + t * (
+        + 2r² * (v.u) * (w.u)
+        + 2 * (v.u) * (w.u) * (u.u)
+        + 2r² * (v.u) * (u.u)
+        - 2 * (w.v) * (u.u)²
+    ) + (
+        - r² * (w.u)²
+        - (w.u)² * (u.u)
+        - 2r² * (w.u) * (u.u)
+        + w.w * (u.u)²
+        - r² * (u.u)²
+    ) = 0
+
+Agora que encontramos uma equação de 2º grau, podemos resolvê-la para encontrar t e substituí-lo na equação da reta.
+
+    delta = b² - 4 * a * c
+    t = (- b +- sqrt(delta) / (2 * a)
+
+Mas temos que tomar cuidado para o caso em que o denominador de t é igual a zero. Isso só ocorre quando a = 0, mas
+acontece que quando a = 0 deixamos de ter uma equação de 2º grau:
+
+    a * t² + b * t + c = 0
+    0 * t² + b * t + c = 0
+    b * t + c = 0
+
+Temos então uma equação de 1º grau. Basta resolvê-la para encontrar t:
+
+    b * t + c = 0
+    t = - c / b
+
+Mas novamente, temos que ter cuidado com o denominador. No caso em que b = 0, é impossível resolver a equação acima.
+Mas também acontece que quando b = 0, deixamos de ter uma equação de 1 º grau:
+
+    b * t + c = 0
+    0 * t + c = 0
+    c = 0
+
+Isso significa que, caso c seja igual a zero, qualquer valor de t é solução. E quando c é diferente de zero, nenhum
+valor de t é solução.
+
+Finalmente, sempre que é encontrado um valor para t, é necessário verificar se o valor de s correspondente está no
+intervalo 0 <= s <= 1, para verificar se o t é solução válida.
+"""
+
+
+def solve(line, cone):
+    if not isinstance(line, Line):
+        raise TypeError("Argumento 'line' deve ser de tipo 'Line'.")
+    if not isinstance(cone, Cone):
+        raise TypeError("Argumento 'cone' deve ser de tipo 'Cone'.")
+
+    v = line.direction
+    u = cone.top - cone.bottom
+    w = cone.bottom - line.origin
+
+    a = (v * v) * ((u * u) ** 2) - ((v * u) ** 2) * ((cone.radius ** 2) + (u * u))
+    b = 2 * ((cone.radius ** 2) * (v * u) * (w * u + u * u) + (v * u) * (w * u) * (u * u) - (w * v) * ((u * u) ** 2))
+    c = (w * w) * ((u * u) ** 2) - (cone.radius ** 2) * ((w * u + u * u) ** 2) - ((w * u) ** 2) * (u * u)
+
+    delta = b ** 2 - 4 * a * c
+
+    if delta < 0:
+        # Não há interseção. A reta e o cone não se encontram.
+        return None
+    else:
+        if math.isclose(a, 0):
+            # A reta e a geratriz do cone são paralelas. Não há equação de segundo grau.
+            if math.isclose(b, 0):
+                if math.isclose(c, 0):
+                    # Qualquer valor de t satisfaz a equação.
+                    return line
+                else:
+                    # Nenhum valor de t satisfaz a equação.
+                    return None
+            else:
+                t = - c / b
+                s = (t * (v * u) - (w * u)) / (u * u)
+                if 0 <= s <= 1:
+                    return line(t)
+                else:
+                    # Não há interseção.
+                    return None
+        else:
+            if math.isclose(delta, 0):
+                # Há apenas uma interseção tangencial possível.
+                t = (- b) / (2 * a)
+                s = (t * (v * u) - (w * u)) / (u * u)
+
+                if 0 <= s <= 1:
+                    # A interseção é válida.
+                    return line(t)
+                else:
+                    # A interseção não é válida.
+                    return None
+            else:
+                # Há duas interseções possíveis.
+                t1 = (- b - math.sqrt(delta)) / (2 * a)
+                t2 = (- b + math.sqrt(delta)) / (2 * a)
+
+                s1 = (t1 * (v * u) - (w * u)) / (u * u)
+                s2 = (t2 * (v * u) - (w * u)) / (u * u)
+
+                if 0 <= s1 <= 1 and 0 <= s2 <= 1:
+                    # As duas interseções são válidas.
+                    return line(t1), line(t2)
+                elif 0 <= s1 <= 1:
+                    # Apenas a primeira interseção é válida.
+                    return line(t1)
+                elif 0 <= s2 <= 1:
+                    # Apenas a segunda interseção é válida.
+                    return line(t2)
+                else:
+                    # Nenhuma das interseções é válida.
+                    return None
+
+
+class Tests(unittest.TestCase):
+    def test_1(self):
+        line = Line(Point(-2, 0, 0), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1, p2 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, -1)
+        self.assertAlmostEqual(p1.y, 0)
+        self.assertAlmostEqual(p1.z, 0)
+
+        self.assertAlmostEqual(p2.x, 1)
+        self.assertAlmostEqual(p2.y, 0)
+        self.assertAlmostEqual(p2.z, 0)
+
+    def test_2(self):
+        line = Line(Point(-2, 1, 0), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, 0)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_3(self):
+        line = Line(Point(-2, 1, 0), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 2, 0), 2)
+
+        p1, p2 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, -1)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+        self.assertAlmostEqual(p2.x, 1)
+        self.assertAlmostEqual(p2.y, 1)
+        self.assertAlmostEqual(p2.z, 0)
+
+    def test_4(self):
+        line = Line(Point(-2, 1, 1), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 2, 0), 2)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, 0)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 1)
+
+    def test_5(self):
+        line = Line(Point(-2, 0, 0), Vector(2, 1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, 0)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_6(self):
+        line = Line(Point(-1, -1, 0), Vector(1, 1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, 0.5)
+        self.assertAlmostEqual(p1.y, 0.5)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_7(self):
+        line = Line(Point(-1, 1, 0), Vector(1, -1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, -0.5)
+        self.assertAlmostEqual(p1.y, 0.5)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_8(self):
+        line = Line(Point(0, 0, 0), Vector(0, 1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, 0)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_9(self):
+        line = Line(Point(-1, 0, 0), Vector(0, 1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 2, 0), 2)
+
+        p1 = solve(line, cone)
+
+        self.assertAlmostEqual(p1.x, -1)
+        self.assertAlmostEqual(p1.y, 1)
+        self.assertAlmostEqual(p1.z, 0)
+
+    def test_10(self):
+        line = Line(Point(-2, 2, 0), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        result = solve(line, cone)
+
+        self.assertIsNone(result)
+
+    def test_11(self):
+        line = Line(Point(-2, -1, 0), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        result = solve(line, cone)
+
+        self.assertIsNone(result)
+
+    def test_12(self):
+        line = Line(Point(-2, 0, 2), Vector(1, 0, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        result = solve(line, cone)
+
+        self.assertIsNone(result)
+
+    def test_13(self):
+        line = Line(Point(-2, 0, 0), Vector(0, 1, 0))
+        cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
+
+        result = solve(line, cone)
+
+        self.assertIsNone(result)
