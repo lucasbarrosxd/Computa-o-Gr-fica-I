@@ -1,46 +1,66 @@
+# Importar arquivos do mesmo pacote.
+from . import Point
+# Importar bibliotecas.
+import math
+
+
 class Vector:
-    def __init__(self, dx, dy, dz):
+    def __init__(self, dx: float, dy: float, dz: float) -> None:
         self.dx = dx
         self.dy = dy
         self.dz = dz
+
+    @classmethod
+    def A(cls, dx: float, dy: float, dz: float) -> "Vector":
+        return cls(dx, dy, dz)
+
+    @classmethod
+    def B(cls, p_from: Point, p_to: Point) -> "Vector":
+        return cls(p_to.x - p_from.x, p_to.y - p_from.y, p_to.z - p_from.z)
     
     @property
-    def dx(self):
+    def dx(self) -> float:
         return self._dx
 
     @dx.setter
-    def dx(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'dx' deve ser de tipo numérico.")
-
+    def dx(self, value: float) -> None:
         self._dx = value
 
     @property
-    def dy(self):
+    def dy(self) -> float:
         return self._dy
 
     @dy.setter
-    def dy(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'dy' deve ser de tipo numérico.")
-
+    def dy(self, value: float) -> None:
         self._dy = value
 
     @property
-    def dz(self):
+    def dz(self) -> float:
         return self._dz
 
     @dz.setter
-    def dz(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'dz' deve ser de tipo numérico.")
-
+    def dz(self, value: float) -> None:
         self._dz = value
 
-    def __str__(self):
+    @property
+    def norm(self) -> float:
+        return math.sqrt(self.dx ** 2 + self.dy ** 2 + self.dz ** 2)
+
+    @norm.setter
+    def norm(self, value: float) -> None:
+        old_norm = self.norm
+
+        if math.isclose(old_norm, 0):
+            raise ArithmeticError("Não é possível alterar a norma de um vetor nulo.")
+
+        self.dx = self.dx * value / old_norm
+        self.dy = self.dy * value / old_norm
+        self.dz = self.dz * value / old_norm
+
+    def __str__(self) -> str:
         return "({0}, {1}, {2})".format(self.dx, self.dy, self.dz)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         # Argumento é um vetor.
         if isinstance(other, Vector):
             return (self.dx == other.dx) and (self.dy == other.dy) and (self.dz == other.dz)
@@ -61,10 +81,6 @@ class Vector:
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __iadd__(self, other):
-        # Delegar para outro método.
-        self.__add__(other)
-
     def __sub__(self, other):
         # Argumento é um vetor.
         if isinstance(other, Vector):
@@ -75,10 +91,6 @@ class Vector:
                 "Classe '{0}' não possui suporte para subtração com objetos de tipo '{1}'."
                 .format(self.__class__.__name__, type(other))
             )
-
-    def __isub__(self, other):
-        # Delegar para outro método.
-        self.__sub__(other)
 
     def __neg__(self):
         return Vector(- self.dx, - self.dy, - self.dz)
@@ -98,13 +110,7 @@ class Vector:
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __rmul__(self, other):
-        # Delegar para outro método.
-        return self.__mul__(other)
-
-    def __imul__(self, other):
-        # Delegar para outro método.
-        self.__mul__(other)
+    __rmul__ = __mul__
 
     def __truediv__(self, other):
         # Argumento é um número.
@@ -117,10 +123,6 @@ class Vector:
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __itruediv__(self, other):
-        # Delegar para outro método.
-        self.__truediv__(other)
-
     def __pow__(self, other):
         # Argumento é um vetor.
         if isinstance(other, Vector):
@@ -132,35 +134,14 @@ class Vector:
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __ipow__(self, other):
-        # Delegar para outro método.
-        self.__pow__(other)
-
-    def norm(self):
-        return (self.dx ** 2 + self.dy ** 2 + self.dz ** 2) ** 0.5
-
     @staticmethod
-    def scalar_prod(vector1, vector2):
-        if not isinstance(vector1, Vector):
-            raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
-        if not isinstance(vector2, Vector):
-            raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
-
+    def scalar_prod(vector1: "Vector", vector2: "Vector"):
         return vector1.dx * vector2.dx + vector1.dy * vector2.dy + vector1.dz * vector2.dz
 
     @staticmethod
-    def cross_prod(vector1, vector2):
-        if not isinstance(vector1, Vector):
-            raise TypeError("Argumento 'vector1' deve ser de tipo 'Vector'.")
-        if not isinstance(vector2, Vector):
-            raise TypeError("Argumento 'vector2' deve ser de tipo 'Vector'.")
-
-        try:
-            return Vector(
-                vector1.dy * vector2.dz - vector1.dz * vector2.dy,
-                vector1.dz * vector2.dx - vector1.dx * vector2.dz,
-                vector1.dx * vector2.dy - vector1.dy * vector2.dx
-            )
-        except ValueError:
-            # Vetores são colineares, logo não existe produto vetorial.
-            return None
+    def cross_prod(vector1: "Vector", vector2: "Vector"):
+        return Vector(
+            vector1.dy * vector2.dz - vector1.dz * vector2.dy,
+            vector1.dz * vector2.dx - vector1.dx * vector2.dz,
+            vector1.dx * vector2.dy - vector1.dy * vector2.dx
+        )

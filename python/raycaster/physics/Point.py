@@ -1,44 +1,35 @@
 # Importar arquivos do mesmo pacote.
-from .Vector import *
+from . import Vector
 
 
 class Point:
-    def __init__(self, x, y, z):
+    def __init__(self, x: float, y: float, z: float) -> None:
         self.x = x
         self.y = y
         self.z = z
 
     @property
-    def x(self):
+    def x(self) -> float:
         return self._x
 
     @x.setter
-    def x(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'x' deve ser de tipo numérico.")
-
+    def x(self, value: float) -> None:
         self._x = value
 
     @property
-    def y(self):
+    def y(self) -> float:
         return self._y
 
     @y.setter
-    def y(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'y' deve ser de tipo numérico.")
-
+    def y(self, value: float) -> None:
         self._y = value
 
     @property
-    def z(self):
+    def z(self) -> float:
         return self._z
 
     @z.setter
-    def z(self, value):
-        if not (isinstance(value, (int, float, complex)) and not isinstance(value, bool)):
-            raise TypeError("Parâmetro 'z' deve ser de tipo numérico.")
-
+    def z(self, value: float) -> None:
         self._z = value
 
     def __str__(self):
@@ -65,25 +56,30 @@ class Point:
             .format(self.__class__.__name__, type(other))
         )
 
-    def __radd__(self, other):
-        # Delegar para outro método.
-        return self.__add__(other)
-
-    def __iadd__(self, other):
-        # Delegar para outro método.
-        self.__add__(other)
+    __radd__ = __add__
 
     def __sub__(self, other):
         # Argumento é um ponto.
         if isinstance(other, Point):
             # Diferença entre dois pontos é um vetor.
-            return Vector(self._x - other.x, self._y - other.y, self._z - other.z)
+            return Vector.B(other, self)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para subtração com objetos de tipo '{1}'."
                 .format(self.__class__.__name__, type(other))
             )
 
-    def __isub__(self, other):
-        # Delegar para outro método.
-        self.__sub__(other)
+    def __rshift__(self, other):
+        # Argumento é um ponto.
+        if isinstance(other, Point):
+            # Distância entre dois pontos.
+            return Point.dist(self, other)
+        else:
+            raise TypeError(
+                "Classe '{0}' não possui suporte para rshift com objetos de tipo '{1}'."
+                .format(self.__class__.__name__, type(other))
+            )
+
+    @staticmethod
+    def dist(p1: "Point", p2: "Point") -> float:
+        return (p1 - p2).norm

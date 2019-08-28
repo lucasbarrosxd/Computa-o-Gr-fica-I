@@ -3,30 +3,24 @@ from . import Point, Vector
 
 
 class Line:
-    def __init__(self, origin, direction):
+    def __init__(self, origin: Point, direction: Vector) -> None:
         self.origin = origin
         self.direction = direction
 
     @property
-    def origin(self):
+    def origin(self) -> Point:
         return self._origin
 
     @origin.setter
-    def origin(self, value):
-        if not isinstance(value, Point):
-            raise TypeError("Parâmetro 'origin' deve ser de tipo 'Point'.")
-
+    def origin(self, value: Point) -> None:
         self._origin = value
 
     @property
-    def direction(self):
+    def direction(self) -> Vector:
         return self._direction
 
     @direction.setter
-    def direction(self, value):
-        if not isinstance(value, Vector):
-            raise TypeError("Parâmetro 'direction' deve ser de tipo 'Vector'.")
-
+    def direction(self, value: Vector) -> None:
         self._direction = value
 
     def __str__(self):
