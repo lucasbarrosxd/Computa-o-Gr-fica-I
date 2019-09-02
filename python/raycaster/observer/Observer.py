@@ -1,5 +1,5 @@
 # Importar arquivos do pacote.
-from . import Panel
+from .Panel import Panel
 # Importar arquivos do projeto.
 from python.raycaster.physics import Point
 

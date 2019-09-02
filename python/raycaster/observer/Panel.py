@@ -1,24 +1,31 @@
 # Importar arquivos do projeto.
 from python.raycaster.physics import Point, Vector
+# Importar bibliotecas.
+import math
+from typing import Tuple, Optional
 
 
 class Panel:
-    def __init__(self, position: Point, normal: Vector, res_x: int, res_y: int, width: float, height: float, rotation: float):
-        self.position = position
+    def __init__(self, center: Point, normal: Vector, res: Tuple[int, int], size: Tuple[float, float], orientation: Optional[Vector] = None):
+        self.center = center
         self.normal = normal
-        self.res_x = res_x
-        self.res_y = res_y
-        self.width = width
-        self.height = height
-        self.rotation = rotation
+        if orientation is None:
+            if normal.dx != 0 or normal.dz != 0:
+                self.orientation = Vector(0, -1, 0) ** normal
+            else:
+                self.orientation = Vector(1, 0, 0)
+        else:
+            self.orientation = orientation
+        self.res = res
+        self.size = size
 
     @property
-    def position(self) -> Point:
-        return self._position
+    def center(self) -> Point:
+        return self._center
 
-    @position.setter
-    def position(self, value: Point) -> None:
-        self._position = value
+    @center.setter
+    def center(self, value: Point) -> None:
+        self._center = value
 
     @property
     def normal(self) -> Vector:
@@ -29,46 +36,46 @@ class Panel:
         self._normal = value
 
     @property
-    def res_x(self) -> int:
-        return self._res_x
+    def orientation(self) -> Vector:
+        return self._orientation
 
-    @res_x.setter
-    def res_x(self, value: int) -> None:
-        self._res_x = value
+    @orientation.setter
+    def orientation(self, value: Vector) -> None:
+        if not math.isclose(self.normal * value, 0):
+            raise ValueError
 
-    @property
-    def res_y(self) -> int:
-        return self._res_y
-
-    @res_y.setter
-    def res_y(self, value: int) -> None:
-        self._res_y = value
+        self._orientation = value
 
     @property
-    def width(self):
-        return self._width
+    def res(self) -> Tuple[int, int]:
+        return self._res
 
-    @width.setter
-    def width(self, value: float) -> None:
-        self._width = value
+    @res.setter
+    def res(self, value: Tuple[int, int]) -> None:
+        if value[0] < 0 or value[1] < 0:
+            raise ValueError
+        if value[0] % 2 == 1 or value[1] % 2 == 1:
+            raise ValueError
 
-    @property
-    def height(self):
-        return self._height
-
-    @height.setter
-    def height(self, value: float) -> None:
-        self._height = value
+        self._res = value
 
     @property
-    def rotation(self):
-        return self._rotation
+    def size(self) -> Tuple[float, float]:
+        return self._size
 
-    @rotation.setter
-    def rotation(self, value: float) -> None:
-        self._rotation = value
+    @size.setter
+    def size(self, value: Tuple[float, float]) -> None:
+        if value[0] < 0 or value[1] < 0:
+            raise ValueError
 
-    def __str__(self):
-        return "Pos:{0} N:{1} Res:{2}x{3} Size:{4}x{5} º:{6}".format(
-            self.position, self.normal, self.res_x, self.res_y, self.width, self.height, self.rotation
+        self._size = value
+
+    def __str__(self) -> str:
+        return "Pos:{0} N:{1} Ori:{2} Res:{3} Size:{4}".format(
+            self.center, self.normal, self.orientation, self.res, self.size,
         )
+
+    def point(self, index_x: float, index_y: float) -> Point:
+        return self.center + \
+               (index_x/self.res[0] - 0.5) * self.size[0]/2 * self.orientation.unit() + \
+               (index_y/self.res[1] - 0.5) * self.size[1]/2 * (self.orientation ** self.normal).unit()
