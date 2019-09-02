@@ -7,6 +7,14 @@ class Line:
         self.origin = origin
         self.direction = direction
 
+    @classmethod
+    def A(cls, origin: Point, direction: Vector) -> "Line":
+        return cls(origin, direction)
+
+    @classmethod
+    def B(cls, start: Point, end: Point) -> "Line":
+        return cls(start, end - start)
+
     @property
     def origin(self) -> Point:
         return self._origin
