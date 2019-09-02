@@ -1,11 +1,13 @@
-# Importar arquivos do projeto.
-from python.raycaster.physics import *
+# Importar do pacote.
+from python.raycaster.object.surface import Intersectionable
+# Importar do projeto.
+from python.raycaster.physics import Point, Vector, Line
 # Importar bibliotecas.
 import math
-from typing import Optional, Union
+from typing import Union
 
 
-class Plane:
+class Plane(Intersectionable):
     def __init__(self, origin: Point, normal: Vector) -> None:
         self.origin = origin
         self.normal = normal
@@ -40,37 +42,43 @@ class Plane:
                 .format(self.__class__.__name__, type(other))
             )
 
-    @staticmethod
-    def intersection(plane: "Plane", line: Line, coef: bool = True, fwrd: bool = True):
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
         v = line.direction
-        n = plane.normal
-        prpl = plane.origin - line.origin
+        n = self.normal
+        prpl = self.origin - line.origin
+
+        # Cálculos repetidos.
+        v_scalar_n = v * n
 
         # Verificar se o plano e a reta são perpendiculares.
-        if not math.isclose(v * n, 0):
+        if not math.isclose(v_scalar_n, 0):
             # Não são perpendiculares. Há uma única interseção.
-            t = (prpl * n) / (v * n)
+            t = (prpl * n) / v_scalar_n
 
-            return None if (t < 0 and fwrd) else (t if coef else line(t))
+            return None if (fwrd and t < 0) else (t if coef else line(t))
         else:
             # São perpendiculares.
             if math.isclose(prpl * n, 0):
                 # A reta está sobre o plano. A interseção é a própria reta. Retornar a origem da reta.
-                t = 0
-                return None if (t < 0 and fwrd) else (t if coef else line(t))
+                return 0 if coef else line.origin
             else:
+                # A reta é paralela ao plano. Não há interseção.
                 return None
 
-    @staticmethod
-    def _true_intersection(plane: "Plane", line: Line):
+    def _true_intersection(self, line: Line):
         v = line.direction
-        n = plane.normal
-        prpl = plane.origin - line.origin
+        n = self.normal
+        prpl = self.origin - line.origin
 
+        # Verificar se a reta e o plano são perpendiculares.
         if not math.isclose(v * n, 0):
+            # Não são perpendiculares. Há uma única interseção.
             return line((prpl * n) / (v * n))
         else:
+            # São perpendiculares.
             if math.isclose(prpl * n, 0):
+                # A reta está sobre o plano. A interseção é a própria reta.
                 return line
             else:
+                # A reta é paralela ao plano. Não há interseção.
                 return None

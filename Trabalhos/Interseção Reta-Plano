@@ -1,0 +1,40 @@
+Interseção reta-plano
+
+Dados uma reta R = (Pr, v) e um plano L = (Pl, n), calcular a interseção entre os dois.
+
+SOLUÇÃO:
+
+Queremos encontrar um ponto P que esteja contido no plano no plano e na reta. Isto implica que o vetor PPl é
+perpendicular à normal do plano. Com essas informações podemos montar nosso problema:
+
+(1) P = Pr + t * v                      // Equação da reta R.
+(2) PPl • n = 0                         // Equação de vetores perpendiculares.
+
+Podemos desenvolver (2):
+
+(2) PPl • n = 0
+2.1 (Pl - P) • n = 0
+2.2 (Pl - (Pr + t * v)) • n = 0         // Substituindo por (1).
+2.3 (Pl - Pr - t * v) • n = 0
+2.4 (PrPl - t * v) • n = 0
+2.5 PrPl • n - t * v • n = 0
+2.6 PrPl • n = t * v • n
+2.7 t = PrPl • n / v • n                ⬌ v • n ≠ 0
+
+Agora que encontramos t, basta substituí-lo na equação da reta:
+
+(1) P = Pr + t * v
+1.1 P = Pr + (PrPl • n / v • n) * v     ⬌ v • n ≠ 0
+
+Mas P ainda está indefinido para o caso em que v • n = 0. Podemos voltar para o seguinte passo no desenvolvimento
+da segunda equação:
+
+(3) v • n = 0                           // Suposição.
+    
+3.1 PrPl • n = t * v • n                // Passo antes de introduzirmos '⬌ v • n ≠ 0'.
+3.2  PrPl • n = t * 0
+3.3  PrPl • n = 0
+
+Caso PrPl • n = 0, então qualquer valor para o coeficiente t é solução (a interseção entre a reta e o plano é a
+própria reta). Caso PrPl • n ≠ 0, então nenhum valor para o coeficiente t é solução (não há interseção).
+
