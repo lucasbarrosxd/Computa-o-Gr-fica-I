@@ -1,5 +1,5 @@
 # Importar arquivos do mesmo pacote.
-from . import Vector
+from .Vector import Vector
 
 
 class Point:

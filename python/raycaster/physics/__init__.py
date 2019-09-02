@@ -1,3 +1,3 @@
-from .Point import *
-from .Vector import *
-from .Line import *
+from .Point import Point
+from .Vector import Vector
+from .Line import Line

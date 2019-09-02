@@ -57,6 +57,9 @@ class Vector:
         self.dy = self.dy * value / old_norm
         self.dz = self.dz * value / old_norm
 
+    def unit(self) -> "Vector":
+        return self / self.norm
+
     def __str__(self) -> str:
         return "({0}, {1}, {2})".format(self.dx, self.dy, self.dz)
 

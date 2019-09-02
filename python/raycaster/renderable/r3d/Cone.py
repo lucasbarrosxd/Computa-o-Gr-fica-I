@@ -1,23 +1,14 @@
 # Importar arquivos do projeto.
 from python.raycaster.physics import *
 # Importar bibliotecas.
-from typing import Union
+import math
 
 
 class Cone:
-    def __init__(self, bottom: Point, normal: Vector, height: float, radius: float) -> None:
+    def __init__(self, bottom: Point, top: Point, radius: float) -> None:
         self.bottom = bottom
-        self.normal = normal
-        self.height = height
+        self.top = top
         self.radius = radius
-
-    @classmethod
-    def A(cls, bottom: Point, normal: Vector, height: float, radius: float) -> "Cone":
-        return cls(bottom, normal, height, radius)
-
-    @classmethod
-    def B(cls, bottom: Point, top: Point, radius: float) -> "Cone":
-        return cls(bottom, top - bottom, (top - bottom).norm, radius)
 
     @property
     def bottom(self) -> Point:
@@ -75,7 +66,7 @@ class Cone:
             )
 
     @staticmethod
-    def intersection(cone: "Cone", line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
+    def intersection(cone: "Cone", line: Line, coef: bool = True, fwrd: bool = True):
         v = line.direction
         u = cone.top - cone.bottom
         w = cone.bottom - line.origin
@@ -89,26 +80,25 @@ class Cone:
 
         if delta < 0:
             # Não há interseção. A reta e o cone não se encontram.
-            return None
+            return False
         else:
             if math.isclose(a, 0):
                 # A reta e a geratriz do cone são paralelas. Não há equação de segundo grau.
                 if math.isclose(b, 0):
                     if math.isclose(c, 0):
                         # Qualquer valor de t satisfaz a equação.
-                        t = 0
-                        return None if (t < 0 and fwrd) else (t if coef else line(t))
+                        return True
                     else:
                         # Nenhum valor de t satisfaz a equação.
-                        return None
+                        return False
                 else:
                     t = - c / b
                     s = (t * (v * u) - (w * u)) / (u * u)
                     if 0 <= s <= 1:
-                        return None if (t < 0 and fwrd) else (t if coef else line(t))
+                        return True
                     else:
                         # Não há interseção.
-                        return None
+                        return False
             else:
                 if math.isclose(delta, 0):
                     # Há apenas uma interseção tangencial possível.
@@ -117,10 +107,10 @@ class Cone:
 
                     if 0 <= s <= 1:
                         # A interseção é válida.
-                        return None if (t < 0 and fwrd) else (t if coef else line(t))
+                        return True
                     else:
                         # A interseção não é válida.
-                        return None
+                        return False
                 else:
                     # Há duas interseções possíveis.
                     t1 = (- b - math.sqrt(delta)) / (2 * a)
@@ -131,17 +121,17 @@ class Cone:
 
                     if 0 <= s1 <= 1 and 0 <= s2 <= 1:
                         # As duas interseções são válidas.
-                        return None if (max(t1, t2) < 0 and fwrd) else (max(t1, t2) if coef else line(max(t1, t2)))
+                        return True
                     elif 0 <= s1 <= 1:
                         # Apenas a primeira interseção é válida.
-                        return None if (t1 < 0 and fwrd) else (t1 if coef else line(t1))
+                        return True
                     elif 0 <= s2 <= 1:
                         # Apenas a segunda interseção é válida.
-                        return None if (t2 < 0 and fwrd) else (t2 if coef else line(t2))
+                        return True
                     else:
                         # Nenhuma das interseções é válida.
-                        return None
-    
+                        return False
+
     @staticmethod
     def _true_intersection(plane: "Cone", line: Line):
         pass
