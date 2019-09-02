@@ -1,0 +1,46 @@
+Interseção reta-esfera
+
+Dados uma reta R = (Pr, v) e uma esfera E = (Po, r), calcular a interseção entre os dois.
+
+SOLUÇÃO:
+
+Queremos encontrar um ponto que esteja contido tanto na reta R quanto na esfera E. Logo temos:
+
+(1) P = Pr + t * v     // Equação da reta.
+(2) ||PPo|| = r        // Distância entre a interseção e o centro da esfera é igual ao raio.
+
+Podemos desenvolver (2):
+
+(2) ||PPo|| = r
+2.1 sqrt(PPo • PPo) = r     // Não introduzimos '⬌ PPc • PPc ≥ 0' pois para qualquer vetor x, x • x ≥ 0.
+2.2 PPo • PPo = r²
+2.3 (Po - P) • (Po - P) = r²
+2.4 (Po - (Pr + t * v)) • (Po - (Pr + t * v)) = r²
+2.5 (Po - Pr - t * v) • (Po - Pr - t * v) = r²
+2.6 ((Po - Pr) - t * v) • ((Po - Pr) - t * v) = r²
+2.7 (PrPo - t * v) • (PrPo - t * v) = r²
+2.8 PrPo • PrPo - 2t * PrPo • v + t² * v • v = r²
+2.9 t² * (v • v) + t * (- 2 * PrPo • v) + (PrPo • PrPo - r²) = 0
+
+Solucionando a equação de 2º grau em t:
+
+2.A t = ((- b) ± sqrt(Δ)) / (2 * a)                                                            ⬌ a ≠ 0, Δ ≥ 0
+2.B t = (2 * PrPo • v ± sqrt(4 * PrPo • v - 4 * v • v * (PrPo • PrPo - r²))) / (2 * v • v)     ⬌ a ≠ 0, Δ ≥ 0
+2.C t = (PrPo • v ± sqrt(PrPo • v - v • v * (PrPo • PrPo - r²))) / (v • v)                     ⬌ a ≠ 0, Δ ≥ 0
+    
+Encontramos uma fórmula para t, mas ainda é necessário verificar os casos em que essa fórmula não é válida:
+
+a = 0:
+(3) a = v • v = 0
+3.1 🠚 v = 0
+3.2 🠚 x • v = 0 para qualquer vetor x
+
+2.9 t² * (v • v) + t * (- 2 * PrPo • v) + (PrPo • PrPo - r²) = 0     // Antes de introduzirmos '⬌ v ≠ 0'.
+2.D t² * 0 + t * (- 2 * 0) + (PrPo • PrPo - r²) = 0
+2.E PrPo • PrPo - r² = 0
+2.F PrPo • PrPo = r²
+    
+Quando essa equação é verdade, qualquer valor de t é solução. Caso contrário, nenhum valor de t é solução.
+
+O caso Δ < 0 caso é especial. Sempre que o delta é menor que zero, não há solução nos reais pois ambas as raízes são
+complexas. Note que não há como os dois casos acontecerem, pois Δ = b² - 4 * a * c, e se a = 0 então Δ = b² ≥ 0.
