@@ -1,4 +1,4 @@
-# Importar arquivos do mesmo pacote.
+# Importar do pacote.
 from . import Point
 # Importar bibliotecas.
 import math

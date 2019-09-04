@@ -1,2 +1,0 @@
-class Cube:
-    pass

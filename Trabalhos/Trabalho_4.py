@@ -1,32 +1,30 @@
+# Importar arquivos do projeto.
 from python.raycaster.physics import *
 from python.raycaster.observer import Scenery, Observer
-from python.raycaster.renderable.r3d import Cone
+from python.raycaster.object.r3d import Cone
+# Importar bibliotecas.
 from PIL import Image, ImageDraw
-
-
-def new_image(mode, size, color=0):
-    return Image.new(mode, size, color)
 
 
 mode = 'RGB'
 white = (255, 255, 255)
 green = (46, 204, 113)
+red = (255, 0, 0)
 black = 0
-res = (1920, 1080)
+res = (200, 100)
 
-im = new_image(mode=mode, size=res, color=black)
-draw = ImageDraw.Draw(im)
+im = Image.new(mode=mode, size=res, color=black)
 
 # Fazer o raycast.
-cone = Cone(Point(10, 0, 0), Point(10, 5, 0), 2)
+observer = Observer.A(Point(0, 0, 0), Point(5, 0, 0), res, size=(10, 10))
 
-scenery = Scenery(Observer.A(Point(0, 0, 0), Point(5, 0, 0), res, size=(10, 10)))
+scenery = Scenery()
+cone = Cone(Point(10, 0, 0), Point(10, 5, 0), 2)
 scenery.add_obj(cone, "cone", green)
 
-for index_x in range(res[0]):
-    for index_y in range(res[1]):
-        if scenery.shoot(index_x, res[1] - index_y - 1):
-            draw.point((index_x, index_y), green)
+lista = observer.render(scenery)
+
+im.putdata(lista)
 
 image_path = '../Debug/'
 image_name = 'imagemInicial.png'

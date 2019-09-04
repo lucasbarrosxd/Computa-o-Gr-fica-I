@@ -73,56 +73,56 @@ class Cylinder:
         b = cilindro.bottom
         r = cilindro.radius
 
-        v = (p0-b)-((p0-b)*u)**u
-        w = d-(d*u)**u
+        v = (p0 - b) - ((p0 - b) * u) ** u
+        w = d - (d * u) ** u
 
-        alpha = w*w
-        beta = v*w
-        c = v*v - r**2
+        alpha = w * w
+        beta = v * w
+        c = v * v - r ** 2
 
-        delta = beta**2 - 4*alpha*c
+        delta = beta ** 2 - 4 * alpha * c
         t1 = None
         t2 = None
 
         if delta < 0:
-            #Não há interseção
+            # Não há interseção
             return False
         else:
             if math.isclose(alpha, 0):
-                if math.isclose(beta, 0):  
+                if math.isclose(beta, 0):
                     if math.isclose(c, 0):
                         return True
                     else:
                         return False
                 else:
-                    t1 = (-c)/beta
+                    t1 = (-c) / beta
             else:
-                if math.isclose(delta,0):
-                    t1 = -beta/(2*alpha)
+                if math.isclose(delta, 0):
+                    t1 = -beta / (2 * alpha)
                 else:
                     t1 = (math.sqrt(delta) - beta) / (2 * a)
                     t2 = (- math.sqrt(delta) - beta) / (2 * a)
-        
+
         p1 = None
         p2 = None
         if t1:
-            p1 = p0 + d*t1
+            p1 = p0 + d * t1
         if t2:
-            p2 = p0 + d*t2
-        
+            p2 = p0 + d * t2
+
         validp1 = False
         validp2 = False
 
-        if 0 < (p1-b)*u and (p1-b)*u < h and t1 >= 0:
+        if 0 < (p1 - b) * u and (p1 - b) * u < h and t1 >= 0:
             validp1 = True
 
-        if 0 < (p2-b)*u and (p2-b)*u < h and t2 >= 0:
+        if 0 < (p2 - b) * u and (p2 - b) * u < h and t2 >= 0:
             validp2 = True
 
         if validp1:
             if validp2:
                 if t1 < t2:
-                    return t1  
+                    return t1
                 else:
                     return t2
             else:
@@ -132,5 +132,5 @@ class Cylinder:
         else:
             return False
 
-        
+
 

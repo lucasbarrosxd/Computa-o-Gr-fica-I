@@ -1,0 +1,164 @@
+Interseção reta-cilindro
+
+Dados um Cilindro C = (P0, P1, r) e uma reta R = (Pr, v), calcular a interseção entre os dois.
+
+SOLUÇÃO:
+
+Primeiro, montamos o problema. Vamos estabeler o vetor u = P1 - P0, e em seguida definimos o ponto P' que é a
+projeção do ponto P sobre o vetor u. Agora já temos as seguintes equações:
+
+(1) P = Pr + t * v      // Equação da reta R.
+(2) P' = P0 + s * u     // Equação da reta do cilindro C/vetor u.
+(3) ||PP'|| = r         // A distância entre P e P' é igual ao raio r do cilindro C.
+(4) PP' • u = 0         // O vetor u é perpendicular ao vetor PP'.
+(*) 0 <= s <= 1         // Garante que o ponto encontrado está no cilindro.
+
+Agora podemos começar a resolver o problema. As equações de reta são mais complicadas de usar, então podemos começar
+por (3) ou (4):
+
+(3) ||PP'|| = r
+    sqrt(PP' • PP') = r     // Não introduzimos '⬌ PP' • PP' ≥ 0' pois para qualquer vetor x, x • x ≥ 0.
+    PP' • PP' = r²
+    (P' - P) • (P' - P) = r²
+    (P0 + s * u - Pr - t * v) • (P0 + s * u - Pr - t * v) = r²
+    ((P0 - Pr) + s * u - t * v) • ((P0 - Pr) + s * u - t * v) = r²
+    (PrP0 + s * u - t * v) • (PrP0 + s * u - t * v) = r²                 // PrP0 = vetor w para faciliar os cálculos.
+    w • w + s² * u • u + t² * v • v + 2 * s * w • u - 2 * t * w • v - 2 * t * s * u • v = r²
+
+Chegamos a um ponto em que só temos duas variáveis: os coeficients t e s. Mas a equação é da forma quadrática, o que
+deixa difícil calcular o valor de t. Vamos tentar desenvolver a equação (4):
+
+(4) PP' • u = 0
+    (P' - P) • u = 0
+    (P0 + s * u - Pr - t * v) • u = 0
+    ((P0 - Pr) + s * u - t * v) • u = 0
+    (w + s * u - t * v) • u = 0
+    w • u + s * u • u - t * v • u = 0
+    s = (t * v • u - w • u) / u • u         ⬌ u • u ≠ 0
+
+Analisamos o caso u • u = 0:
+
+    w • u + s * u • u - t * v • u = 0
+    0 + s * 0 - t * 0 = 0
+    0 = 0
+
+O que implica que quaisquer t e s são solução. Podemos olhar (3):
+
+    w • w + s² * u • u + t² * v • v + 2 * s * w • u - 2 * t * w • v - 2 * t * s * u • v = r²
+    w • w + s² * 0 + t² * v • v + 2 * s * 0 - 2 * t * w • v - 2 * t * s * 0 = r²
+    w • w + t² * v • v - 2 * t * w • v = r²
+    t² * v • v - 2 * t * w • v + w • w - r² = 0
+
+Como o coeficiente s sumiu da equação, para qualquer t solução, qualquer s é solução. Note que a equação acima é
+igual à equação da interseção reta-esfera. Isso porque como o vetor u do cilindro virou um ponto, o próprio cilindro
+torna-se uma esfera. A solução nessa caso é a mesma:
+
+    t = (w • v ± sqrt(w • v - v • v * (w • w - r²))) / (v • v)     ⬌ a ≠ 0, Δ ≥ 0
+
+Quando Δ < 0 não há solução. Quando a = 0:
+
+    w • w - r² = 0
+
+Caso verdade, qualquer t é solução. Caso contrário, nenhum t é solução.
+
+Voltando para a solução inicial (em que u • u ≠ 0), podemos substituir o s encontrado em (4) em (3):
+
+    w • w + s² * u • u + t² * v • v + 2 * s * w • u - 2 * t * w • v - 2 * t * s * u • v = r²         ⬌ u • u ≠ 0
+    s² * u • u + s * (2 * w • u - 2 * t * u • v) + (w • w + t² * v • v - 2 * t * w • v - r²) = 0     ⬌ u • u ≠ 0
+    (t² * (v • u)² - 2 * t * (v • u) * (w • u) + (w • u)²) / u • u
+    ... + 2 * (2 * t * (u • v) * (w • u) - t² * (u • v)² - (w • u)²) / u • u
+    ... + (w • w + t² * v • v - 2 * t * w • v - r²) = 0                                              ⬌ u • u ≠ 0
+    (t² * (v • u)² - 2 * t * (v • u) * (w • u) + (w • u)²) / u • u
+    ... - 2 * (t² * (u • v)² - 2 * t * (u • v) * (w • u) + (w • u)²) / u • u
+    ... + (w • w + t² * v • v - 2 * t * w • v - r²) = 0                                              ⬌ u • u ≠ 0
+    (- t² * (u • v)² + 2 * t * (u • v) * (w • u) - (w • u)²) / u • u
+    ... + w • w + t² * v • v - 2 * t * w • v - r² = 0                                                ⬌ u • u ≠ 0
+    t² * (v • v - (u • v)² / u • u)
+    ... + t * 2 * ((u • v) * (w • u) / (u • u) - w • v)
+    ... + (w • w - (w • u)² / u • u - r²) = 0                                                        ⬌ u • u ≠ 0
+    t² * (v • v * u • u - (u • v)²)
+    ... + t * 2 * (u • v * w • u - w • v * u • u)
+    ... + (w • w * u • u - (w • u)² - r² * u • u) = 0                                                ⬌ u • u ≠ 0
+
+Chegamos em uma equação de 2º grau que só possui o coeficiente t. Agora podemos resolvê-la:
+
+    t = (- b ± sqrt(delta)) / (2 * a)     ⬌ u • u ≠ 0 & a ≠ 0, Δ ≥ 0
+
+Δ < 0 é um caso especial que não possui raízes. Quando a = 0:
+
+    a = 0
+    v • v * u • u - (u • v)² = 0     ⬌ u • u ≠ 0
+
+O que só ocorre quando v = 0 ou v e u são colineares. Voltamos ao momento antes de resolvermos a equação do 2º grau:
+
+    t² * (v • v * u • u - (u • v)²)
+    ... + t * 2 * (u • v * w • u - w • v * u • u)
+    ... + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
+    t² * 0
+    ... + t * 2 * (u • v * w • u - w • v * u • u)
+    ... + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
+
+Caso v = 0:
+
+    t² * 0
+    ... + t * 2 * (0 * w • u - 0 * u • u)
+    ... + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
+    t² * 0
+    ... + t * 0
+    ... + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
+    w • w * u • u - (w • u)² - r² * u • u = 0             ⬌ u • u ≠ 0
+
+Caso seja verdade, qualquer t é solução. Caso contráio, nenhum t é solução.
+
+Caso v e u colineares:
+
+    t * 2 * (u • v * w • u - w • v * u • u) + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
+    t = - (w • w * u • u - (w • u)² - r² * u • u) / 2 * (u • v * w • u - w • v * u • u)       ⬌ u • u ≠ 0, b ≠ 0
+
+Não há casos especiais introduzidos pela divisão pois
+
+Caso qualquer um seja zero, o denominador zera, mas acontece que esse denominador é igual a 2a, o que implica que o a
+da equação de 2º grau é igual a zero. Com isto, a equação deixa de ser do 2º grau e passa a ser do 1º grau:
+
+    a * t² + b * t + c = 0
+    0 * t² + b * t + c = 0
+    b * t + c = 0
+    t * 2 * (u.v * w.u - w.v * u.u) + (w.w * u.u - (w.u)² - r² * u.u) = 0
+
+Se for o primeiro caso, em que o vetor v é nulo, então o b da equação também zera, sobrando:
+
+    t * b + c = 0
+    t * 0 + c = 0
+    c = 0
+    w.w * u.u - (w.u)² - r² * u.u = 0
+
+Caso c seja realmente igual a zero, qualquer valor de t é solução. Caso c seja diferente de zero, nenhum valor de t é
+solução. No segundo caso, o b também zera, mas o c também, então caso o vetor u seja nulo, qualquer valor de t
+é solução. No terceiro caso, b também zera novamente, e é necessário verificar se c é igual a zero. Analisando o
+significado físico de cada um desses casos:
+
+Primeiro caso:
+    v.v = 0 --> a = 0 e b = 0
+
+Sabemos que v = (0, 0, 0), o que significa que na verdade a reta é um ponto. Daqui há duas opções: o ponto está sobre
+a superfície do cilindro, ou não. Como a e b são zero, a equação passa a ter grau 0:
+
+    a * t² + b * t + c = 0
+    0 * t² + 0 * t + c = 0
+    c = 0
+    w.w * u.u - (w.u)² - r² * u.u = 0
+    
+Se o valor de c realmente for zero, significa que qualquer valor de t satisfaz a equação, e a reta(ponto) está sobre
+a superfície do cilindro. Caso c seja diferente de zero, a reta(ponto) não está sobre a superfície do cilindro.
+
+Segundo caso:
+    u.u = 0 --> a = 0, b = 0 e c = 0
+
+Sabemos que u = (0, 0, 0), o que significa que na verdade a base e o topo do cilindro estão no mesmo ponto, logo não
+há cilindro. Pode parecer que teremos um círculo, mas agora o produto escalar PP'.u é sempre igual a zero, então
+qualquer ponto P no espaço a satisfaz. O que resta é a necessidade de ||PP'|| = r, logo o cilindro vira uma esfera.
+
+    
+Ainda é necessário calcular se 0 <= s <= 1 sempre que encontramos um t para saber se nossa(s) resposta(s) é(são)
+válida(s). Como já encontramos s em função de t, basta substituir t na equação. Feito isso, só falta calcular os
+pontos de interseção através da equação da reta.

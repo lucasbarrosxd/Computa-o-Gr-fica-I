@@ -5,8 +5,8 @@ Dados uma Reta R = (Pr, v) e um Cone C = (P0, P1, r), calcular a(s) interseção
 """
 
 # Importar arquivos do projeto.
-from python.raycaster.basic import Point, Vector, Line
-from python.raycaster.object import Cone
+from python.raycaster.physics import Point, Vector, Line
+from python.raycaster.renderable import Cone
 # Importar bibliotecas.
 import math
 import unittest
@@ -221,6 +221,8 @@ class Tests(unittest.TestCase):
         cone = Cone(Point(0, 0, 0), Point(0, 1, 0), 1)
 
         p1, p2 = solve(line, cone)
+
+        self.assertIsInstance(p1, Point)
 
         self.assertAlmostEqual(p1.x, -1)
         self.assertAlmostEqual(p1.y, 0)

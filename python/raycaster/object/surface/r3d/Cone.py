@@ -1,10 +1,11 @@
 # Importar arquivos do projeto.
+from python.raycaster.object.surface import Intersectionable
 from python.raycaster.physics import *
 # Importar bibliotecas.
 import math
 
 
-class Cone:
+class Cone(Intersectionable):
     def __init__(self, bottom: Point, top: Point, radius: float) -> None:
         self.bottom = bottom
         self.top = top
@@ -65,16 +66,15 @@ class Cone:
                 .format(self.__class__.__name__, type(other))
             )
 
-    @staticmethod
-    def intersection(cone: "Cone", line: Line, coef: bool = True, fwrd: bool = True):
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True, zv_check = False):
         v = line.direction
-        u = cone.top - cone.bottom
-        w = cone.bottom - line.origin
+        u = self.top - self.bottom
+        w = self.bottom - line.origin
 
-        a = (v * v) * ((u * u) ** 2) - ((v * u) ** 2) * ((cone.radius ** 2) + (u * u))
-        b = 2 * ((cone.radius ** 2) * (v * u) * (w * u + u * u) + (v * u) * (w * u) * (u * u) - (w * v) * (
+        a = (v * v) * ((u * u) ** 2) - ((v * u) ** 2) * ((self.radius ** 2) + (u * u))
+        b = 2 * ((self.radius ** 2) * (v * u) * (w * u + u * u) + (v * u) * (w * u) * (u * u) - (w * v) * (
                     (u * u) ** 2))
-        c = (w * w) * ((u * u) ** 2) - (cone.radius ** 2) * ((w * u + u * u) ** 2) - ((w * u) ** 2) * (u * u)
+        c = (w * w) * ((u * u) ** 2) - (self.radius ** 2) * ((w * u + u * u) ** 2) - ((w * u) ** 2) * (u * u)
 
         delta = b ** 2 - 4 * a * c
 

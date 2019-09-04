@@ -9,15 +9,16 @@ class Panel:
     def __init__(self, center: Point, normal: Vector, res: Tuple[int, int], size: Tuple[float, float], orientation: Optional[Vector] = None):
         self.center = center
         self.normal = normal
+        self.res = res
+        self.size = size
+
         if orientation is None:
-            if normal.dx != 0 or normal.dz != 0:
+            if not math.isclose(normal.dx, 0) or not math.isclose(normal.dz, 0):
                 self.orientation = Vector(0, -1, 0) ** normal
             else:
                 self.orientation = Vector(1, 0, 0)
         else:
             self.orientation = orientation
-        self.res = res
-        self.size = size
 
     @property
     def center(self) -> Point:
@@ -37,14 +38,15 @@ class Panel:
 
     @property
     def orientation(self) -> Vector:
-        return self._orientation
+        return self._orientation_x
 
     @orientation.setter
     def orientation(self, value: Vector) -> None:
         if not math.isclose(self.normal * value, 0):
             raise ValueError
 
-        self._orientation = value
+        self._orientation_y = Vector.cross_prod(self.normal, value).unit() * self.size[1] / 2
+        self._orientation_x = Vector.cross_prod(self._orientation_y, self.normal).unit() * self.size[0] / 2
 
     @property
     def res(self) -> Tuple[int, int]:
@@ -53,8 +55,6 @@ class Panel:
     @res.setter
     def res(self, value: Tuple[int, int]) -> None:
         if value[0] < 0 or value[1] < 0:
-            raise ValueError
-        if value[0] % 2 == 1 or value[1] % 2 == 1:
             raise ValueError
 
         self._res = value
@@ -65,10 +65,9 @@ class Panel:
 
     @size.setter
     def size(self, value: Tuple[float, float]) -> None:
-        if value[0] < 0 or value[1] < 0:
-            raise ValueError
-
         self._size = value
+        self._orientation_x *= value[0] / 2
+        self._orientation_y *= value[1] / 2
 
     def __str__(self) -> str:
         return "Pos:{0} N:{1} Ori:{2} Res:{3} Size:{4}".format(
@@ -77,5 +76,5 @@ class Panel:
 
     def point(self, index_x: float, index_y: float) -> Point:
         return self.center + \
-               (index_x/self.res[0] - 0.5) * self.size[0]/2 * self.orientation.unit() + \
-               (index_y/self.res[1] - 0.5) * self.size[1]/2 * (self.orientation ** self.normal).unit()
+               (index_x/self.res[0] - 0.5) * self._orientation_x + \
+               (index_y/self.res[1] - 0.5) * self._orientation_y
