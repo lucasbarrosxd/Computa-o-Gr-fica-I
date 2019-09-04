@@ -1,7 +1,8 @@
 # Importar arquivos do projeto.
 from python.raycaster.physics import *
-
+# Importar bibliotecas.
 import math
+from typing import Union
 
 
 class Cylinder:
@@ -63,65 +64,90 @@ class Cylinder:
     def __str__(self):
         return "B: {0} T: {1} n:{2} h: {3} r: {4}".format(self.bottom, self.top, self.normal, self.height, self.radius)
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True):
-        p0 = line.origin
-        d = line.direction
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
+        v = line.direction
+        u = self.normal
+        w = self.bottom - line.origin
 
-        u = self.normal.unit()
-        h = self.height
-        b = self.bottom
-        r = self.radius
+        # Common calculations.
+        vv = v * v
+        uu = u * u
+        ww = w * w
+        vu = v * u
+        wu = w * u
+        wv = w * v
+        r2 = self.radius ** 2
 
-        v = (p0 - b) - ((p0 - b) * u) * u
-        w = d - (d * u) * u
+        a = vv * uu - vu ** 2
+        b = 2 * (vu * wu - wv * uu)
+        c = (ww - r2) * uu - wu ** 2
 
-        alpha = w * w
-        beta = v * w
-        c = v * v - r ** 2
-
-        delta = beta ** 2 - 4 * alpha * c
-        t1 = None
-        t2 = None
-
-        if delta < 0:
-            # Não há interseção
-            return False
-        else:
-            if math.isclose(alpha, 0):
-                if math.isclose(beta, 0):
-                    if math.isclose(c, 0):
-                        return True
+        # Casos especiais.
+        if math.isclose(a, 0):
+            # O cilindro é uma esfera.
+            if math.isclose(uu, 0):
+                # A reta é um ponto.
+                if math.isclose(vv, 0):
+                    # O ponto está sobre a superfície da esfera.
+                    if math.isclose(ww - r2, 0):
+                        t = 0
+                        return t if coef else line.origin
+                    # O ponto não está sobre a superfície da esfera.
                     else:
-                        return False
+                        return None
                 else:
-                    t1 = (-c) / beta
-            else:
-                if math.isclose(delta, 0):
-                    t1 = -beta / (2 * alpha)
-                else:
-                    t1 = (math.sqrt(delta) - beta) / (2 * alpha)
-                    t2 = (- math.sqrt(delta) - beta) / (2 * alpha)
+                    a = vv
+                    b = - 2 * wv
+                    c = ww - r2
 
-        validp1 = False
-        if t1 is not None:
-            p1 = p0 + d * t1
-            if 0 < (p1 - b) * u < h and t1 >= 0:
-                validp1 = True
-        validp2 = False
-        if t2 is not None:
-            p2 = p0 + d * t2
-            if 0 < (p2 - b) * u < h and t2 >= 0:
-                validp2 = True
+                    delta = b ** 2 - 4 * a * c
 
-        if validp1:
-            if validp2:
-                if t1 < t2:
-                    return t1
+                    # Sem interseção reta-esfera.
+                    if delta < 0:
+                        return None
+                    # Há interseção reta-esfera.
+                    else:
+                        t_min = (- b - math.sqrt(delta)) / (2 * a)
+                        t_max = (- b + math.sqrt(delta)) / (2 * a)
+                        t = t_max if t_min < 0 else t_min
+
+                        return None if (fwrd and t < 0) else (t if coef else line(t))
+            elif math.isclose(c, 0):
+                if math.isclose(vv, 0):
+                    if 0 <= - wu / uu <= 1:
+                        t = 0
+                        return t if coef else line.origin
+                    else:
+                        return None
                 else:
-                    return t2
+                    t_1 = wu / vu
+                    t_2 = (wu + uu) / vu
+                    if t_1 > t_2:
+                        t = t_1 if t_2 < 0 else t_2
+                    else:
+                        t = t_2 if t_1 < 0 else t_1
+
+                    return None if (fwrd and t < 0) else (t if coef else line(t))
             else:
-                return t1
-        elif validp2:
-            return t2
+                return None
         else:
-            return False
+            delta = b ** 2 - 4 * a * c
+
+            if delta < 0:
+                return None
+            else:
+                t_min = ((- b) - math.sqrt(delta)) / (2 * a)
+                s_min = (t_min * vu - wu) / uu
+                t_max = ((- b) + math.sqrt(delta)) / (2 * a)
+                s_max = (t_max * vu - wu) / uu
+                if 0 <= s_min <= 1:
+                    if 0 <= s_max <= 1:
+                        t = t_max if t_min < 0 else t_min
+                    else:
+                        t = s_min
+                elif 0 <= s_max <= 1:
+                    t = s_max
+                else:
+                    return None
+
+                return None if (fwrd and t < 0) else (t if coef else line(t))

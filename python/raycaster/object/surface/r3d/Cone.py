@@ -66,39 +66,55 @@ class Cone(Intersectionable):
                 .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True, zv_check = False):
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True):
         v = line.direction
         u = self.top - self.bottom
         w = self.bottom - line.origin
 
-        a = (v * v) * ((u * u) ** 2) - ((v * u) ** 2) * ((self.radius ** 2) + (u * u))
-        b = 2 * ((self.radius ** 2) * (v * u) * (w * u + u * u) + (v * u) * (w * u) * (u * u) - (w * v) * (
-                    (u * u) ** 2))
-        c = (w * w) * ((u * u) ** 2) - (self.radius ** 2) * ((w * u + u * u) ** 2) - ((w * u) ** 2) * (u * u)
+        # Common calculations.
+        vv = v * v
+        uu = u * u
+        uu2 = uu ** 2
+        ww = w * w
+        vu = v * u
+        wu = w * u
+        vw = v * w
+        r2 = self.radius ** 2
+
+        a = vv * uu2 - (vu ** 2) * (r2 + uu)
+        b = 2 * (r2 * vu * (wu + uu) + vu * wu * uu - vw * uu2)
+        c = ww * uu2 - r2 * ((wu + uu) ** 2) - (wu ** 2) * uu
 
         delta = b ** 2 - 4 * a * c
 
         if delta < 0:
             # Não há interseção. A reta e o cone não se encontram.
-            return False
+            return None
         else:
             if math.isclose(a, 0):
                 # A reta e a geratriz do cone são paralelas. Não há equação de segundo grau.
                 if math.isclose(b, 0):
                     if math.isclose(c, 0):
                         # Qualquer valor de t satisfaz a equação.
-                        return True
+                        t_1 = wu / vu
+                        t_2 = (wu + uu) / vu
+                        if t_1 > t_2:
+                            t = t_1 if t_2 < 0 else t_2
+                        else:
+                            t = t_2 if t_1 < 0 else t_1
+
+                        return None if (fwrd and t < 0) else (t if coef else line(t))
                     else:
                         # Nenhum valor de t satisfaz a equação.
-                        return False
+                        return None
                 else:
                     t = - c / b
                     s = (t * (v * u) - (w * u)) / (u * u)
                     if 0 <= s <= 1:
-                        return True
+                        return None if (fwrd and t < 0) else (t if coef else line(t))
                     else:
                         # Não há interseção.
-                        return False
+                        return None
             else:
                 if math.isclose(delta, 0):
                     # Há apenas uma interseção tangencial possível.
@@ -107,30 +123,32 @@ class Cone(Intersectionable):
 
                     if 0 <= s <= 1:
                         # A interseção é válida.
-                        return True
+                        return None if (fwrd and t < 0) else (t if coef else line(t))
                     else:
                         # A interseção não é válida.
-                        return False
+                        return None
                 else:
                     # Há duas interseções possíveis.
-                    t1 = (- b - math.sqrt(delta)) / (2 * a)
-                    t2 = (- b + math.sqrt(delta)) / (2 * a)
+                    t_min = (- b - math.sqrt(delta)) / (2 * a)
+                    t_max = (- b + math.sqrt(delta)) / (2 * a)
 
-                    s1 = (t1 * (v * u) - (w * u)) / (u * u)
-                    s2 = (t2 * (v * u) - (w * u)) / (u * u)
+                    s_min = (t_min * (v * u) - (w * u)) / (u * u)
+                    s_max = (t_max * (v * u) - (w * u)) / (u * u)
 
-                    if 0 <= s1 <= 1 and 0 <= s2 <= 1:
-                        # As duas interseções são válidas.
-                        return True
-                    elif 0 <= s1 <= 1:
-                        # Apenas a primeira interseção é válida.
-                        return True
-                    elif 0 <= s2 <= 1:
+                    if 0 <= s_min <= 1:
+                        if 0 <= s_max <= 1:
+                            # As duas interseções são válidas.
+                            t = t_max if t_min < 0 else t_min
+                        else:
+                            t = t_min
+                    elif 0 <= s_max <= 1:
                         # Apenas a segunda interseção é válida.
-                        return True
+                        t = t_max
                     else:
                         # Nenhuma das interseções é válida.
-                        return False
+                        return None
+
+                    return None if (fwrd and t < 0) else (t if coef else line(t))
 
     @staticmethod
     def _true_intersection(plane: "Cone", line: Line):

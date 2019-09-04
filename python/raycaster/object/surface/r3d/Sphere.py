@@ -74,7 +74,7 @@ class Sphere(Intersectionable):
             # Há duas interseções.
             t_min = ((-b) - math.sqrt(delta)) / (2 * a)
             t_max = ((-b) - math.sqrt(delta)) / (2 * a)
-            t = max(t_min, min(0, t_max))
+            t = t_max if t_min < 0 else t_min
 
             return None if (fwrd and t < 0) else (t if coef else line(t))
 

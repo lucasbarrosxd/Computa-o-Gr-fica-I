@@ -20,7 +20,7 @@ por (3) ou (4):
     sqrt(PP' • PP') = r     // Não introduzimos '⬌ PP' • PP' ≥ 0' pois para qualquer vetor x, x • x ≥ 0.
     PP' • PP' = r²
     (P' - P) • (P' - P) = r²
-    (P0 + s * u - Pr - t * v) • (P0 + s * u - Pr - t * v) = r²
+    (P0 + s * u - Pr - t * v) • (P0 + s * u - Pr - t * v) = r²           // Substituindo por (1) e (2).
     ((P0 - Pr) + s * u - t * v) • ((P0 - Pr) + s * u - t * v) = r²
     (PrP0 + s * u - t * v) • (PrP0 + s * u - t * v) = r²                 // PrP0 = vetor w para faciliar os cálculos.
     w • w + s² * u • u + t² * v • v + 2 * s * w • u - 2 * t * w • v - 2 * t * s * u • v = r²
@@ -57,6 +57,11 @@ torna-se uma esfera. A solução nessa caso é a mesma:
 
 Quando Δ < 0 não há solução. Quando a = 0:
 
+    v • v = 0
+    v = 0
+
+    t² * v • v - 2 * t * w • v + w • w - r² = 0
+    t² * 0 - 2 * t * 0 + w • w - r² = 0
     w • w - r² = 0
 
 Caso verdade, qualquer t é solução. Caso contrário, nenhum t é solução.
@@ -112,53 +117,24 @@ Caso seja verdade, qualquer t é solução. Caso contráio, nenhum t é soluçã
 
 Caso v e u colineares:
 
+    v = k * u             // Os vetores v e u são proporcionais.
+
     t * 2 * (u • v * w • u - w • v * u • u) + (w • w * u • u - (w • u)² - r² * u • u) = 0     ⬌ u • u ≠ 0
-    t = - (w • w * u • u - (w • u)² - r² * u • u) / 2 * (u • v * w • u - w • v * u • u)       ⬌ u • u ≠ 0, b ≠ 0
 
-Não há casos especiais introduzidos pela divisão pois
+Analisando o termo b:
 
-Caso qualquer um seja zero, o denominador zera, mas acontece que esse denominador é igual a 2a, o que implica que o a
-da equação de 2º grau é igual a zero. Com isto, a equação deixa de ser do 2º grau e passa a ser do 1º grau:
+    2 * (u • v * w • u - w • v * u • u)
+    2 * (k * v • v * k * w • v - w • v * k² * v • v)
+    2 * (0)
 
-    a * t² + b * t + c = 0
-    0 * t² + b * t + c = 0
-    b * t + c = 0
-    t * 2 * (u.v * w.u - w.v * u.u) + (w.w * u.u - (w.u)² - r² * u.u) = 0
+O termo b é sempre igual a zero. Logo:
 
-Se for o primeiro caso, em que o vetor v é nulo, então o b da equação também zera, sobrando:
+    w • w * u • u - (w • u)² - r² * u • u = 0     ⬌ u • u ≠ 0
 
-    t * b + c = 0
-    t * 0 + c = 0
-    c = 0
-    w.w * u.u - (w.u)² - r² * u.u = 0
+Recai no mesmo caso de v = 0.
 
-Caso c seja realmente igual a zero, qualquer valor de t é solução. Caso c seja diferente de zero, nenhum valor de t é
-solução. No segundo caso, o b também zera, mas o c também, então caso o vetor u seja nulo, qualquer valor de t
-é solução. No terceiro caso, b também zera novamente, e é necessário verificar se c é igual a zero. Analisando o
-significado físico de cada um desses casos:
+O caso u = 0 já foi analisado previamente.
 
-Primeiro caso:
-    v.v = 0 --> a = 0 e b = 0
-
-Sabemos que v = (0, 0, 0), o que significa que na verdade a reta é um ponto. Daqui há duas opções: o ponto está sobre
-a superfície do cilindro, ou não. Como a e b são zero, a equação passa a ter grau 0:
-
-    a * t² + b * t + c = 0
-    0 * t² + 0 * t + c = 0
-    c = 0
-    w.w * u.u - (w.u)² - r² * u.u = 0
-    
-Se o valor de c realmente for zero, significa que qualquer valor de t satisfaz a equação, e a reta(ponto) está sobre
-a superfície do cilindro. Caso c seja diferente de zero, a reta(ponto) não está sobre a superfície do cilindro.
-
-Segundo caso:
-    u.u = 0 --> a = 0, b = 0 e c = 0
-
-Sabemos que u = (0, 0, 0), o que significa que na verdade a base e o topo do cilindro estão no mesmo ponto, logo não
-há cilindro. Pode parecer que teremos um círculo, mas agora o produto escalar PP'.u é sempre igual a zero, então
-qualquer ponto P no espaço a satisfaz. O que resta é a necessidade de ||PP'|| = r, logo o cilindro vira uma esfera.
-
-    
 Ainda é necessário calcular se 0 <= s <= 1 sempre que encontramos um t para saber se nossa(s) resposta(s) é(são)
 válida(s). Como já encontramos s em função de t, basta substituir t na equação. Feito isso, só falta calcular os
 pontos de interseção através da equação da reta.

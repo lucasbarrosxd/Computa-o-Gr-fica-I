@@ -15,7 +15,8 @@ dark_blue = (50, 50, 200)
 light_green = (46, 204, 113)
 dark_green = (24, 102, 56)
 red = (255, 0, 0)
-brown = (247, 202, 24)
+yellow = (247, 202, 24)
+brown = (94, 77, 41)
 
 # Fazer o raycast.
 res = (500, 500)
@@ -42,14 +43,14 @@ cone_2 = Cone(Point(7, 7, 8), Point(7, 13, 8), 1.5)
 
 # Cenário
 scene = Scene()
-#scene.add_obj(plane, "ground", light_green)
-#scene.add_obj(sphere_1, "building_1", red)
-#scene.add_obj(sphere_2, "building_2", white)
-#scene.add_obj(sphere_3, "building_3", black)
+scene.add_obj(plane, "ground", light_green)
+scene.add_obj(sphere_1, "building_1", red)
+scene.add_obj(sphere_2, "building_2", white)
+scene.add_obj(sphere_3, "building_3", black)
 scene.add_obj(cyli_1, "tree_trunk_1", brown)
-#scene.add_obj(cone_1, "tree_leaves_1", dark_green)
+scene.add_obj(cone_1, "tree_leaves_1", dark_green)
 scene.add_obj(cyli_2, "tree_trunk_2", brown)
-#scene.add_obj(cone_2, "tree_leaves_2", dark_green)
+scene.add_obj(cone_2, "tree_leaves_2", dark_green)
 
 
 for x_index in range(observer.panel.res[1]):
