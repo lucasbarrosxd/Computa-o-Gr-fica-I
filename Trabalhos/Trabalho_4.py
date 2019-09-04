@@ -33,3 +33,12 @@ image_name = 'imagemInicial.png'
 im.save(image_path + image_name)
 
 im.show()
+
+for y in range(0,1000):
+    for z in range(0, 1000):
+        point = (x,y,z)
+        z-zTrans
+    z=zInicial
+    y=y-yTrans
+
+rigthTrans = 
