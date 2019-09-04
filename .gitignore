@@ -1,4 +1,5 @@
 # Barros
-.idea/
-Aulas/
+/.idea/
+/Aulas/
 __pycache__/
+/Debug/
