@@ -1,23 +1,22 @@
 # Importar arquivos do pacote.
 from .Panel import Panel
-from .Scene import Scenery
+from .Scene import Scene
 # Importar arquivos do projeto.
 from python.raycaster.physics import Point, Vector, Line
 # Importar bibliotecas.
 from typing import Tuple, List
-from PIL import Image, ImageDraw
 
 
-class Observer:
+class VObserver:
     def __init__(self, panel: Panel) -> None:
         self.panel = panel
 
     @classmethod
-    def A(cls, panel_center: Point, normal: Vector, res: Tuple[int, int], size: Tuple[float, float]) -> "Observer":
+    def A(cls, panel_center: Point, normal: Vector, res: Tuple[int, int], size: Tuple[float, float]) -> "VObserver":
         return cls(Panel(panel_center, normal, res, size))
 
     @classmethod
-    def B(cls, panel: Panel) -> "Observer":
+    def B(cls, panel: Panel) -> "VObserver":
         return cls(panel)
 
     @property
@@ -31,7 +30,7 @@ class Observer:
     def shoot(self, index_x: int, index_y: int) -> Line:
         return Line(self.panel.point(index_x, index_y), self.panel.normal)
 
-    def render(self, scenery: Scenery, mode: str = 'RGB') -> List[List[Tuple[int, int, int]]]:
+    def render(self, scenery: Scene, mode: str = 'RGB') -> List[List[Tuple[int, int, int]]]:
         pixels = []
 
         for y_index in range(self.panel.res[1]):

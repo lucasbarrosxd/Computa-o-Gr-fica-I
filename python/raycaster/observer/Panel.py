@@ -10,7 +10,7 @@ class Panel:
         self.center = center
         self.normal = normal
         self.res = res
-        self.size = size
+        self._size = size
 
         if orientation is None:
             if not math.isclose(normal.dx, 0) or not math.isclose(normal.dz, 0):

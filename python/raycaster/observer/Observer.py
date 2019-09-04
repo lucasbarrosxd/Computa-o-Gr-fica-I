@@ -1,11 +1,10 @@
 # Importar arquivos do pacote.
 from .Panel import Panel
-from .Scene import Scenery
+from .Scene import Scene
 # Importar arquivos do projeto.
 from python.raycaster.physics import Point, Line
 # Importar bibliotecas.
 from typing import Tuple, List
-from PIL import Image, ImageDraw
 
 
 class Observer:
@@ -42,22 +41,23 @@ class Observer:
 
         return Line(panel_point, panel_point - self.position)
 
-    def render(self, scenery: Scenery) -> List[Tuple[int, int, int]]:
+    def render(self, scene: Scene) -> List[Tuple[int, int, int]]:
         pixels = []
 
         for x_index in range(self.panel.res[1]):
             for y_index in range(self.panel.res[0]):
                 line = self.shoot(x_index, y_index)
                 min_coef = None
+                min_obj = None
 
-                for obj_name in scenery.objects:
-                    if scenery.objects[obj_name].intersection(line):
-                        pixels.append((255, 255, 255))
+                for obj_name in scene.objects:
+                    # Check if visibility is enabled for that object.
+                    if scene.objects[obj_name][1]:
+                        result = scene.objects[obj_name][0].intersection(line)
+                        if result and (min_coef is None or result < min_coef):
+                            min_coef = result
+                            min_obj = obj_name
+
+                pixels.append(scene.objects[min_obj][2])
 
         return pixels
-
-
-"""
-                if min_coef is None:
-                    # No collisions, render background.
-                    pass"""

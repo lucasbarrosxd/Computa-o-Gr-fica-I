@@ -63,18 +63,17 @@ class Cylinder:
     def __str__(self):
         return "B: {0} T: {1} n:{2} h: {3} r: {4}".format(self.bottom, self.top, self.normal, self.height, self.radius)
 
-    @staticmethod
-    def intersection(cilindro: "Cilindro", line: Line, coef: bool = True, fwrd: bool = True):
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True):
         p0 = line.origin
         d = line.direction
 
-        u = cilindro.normal.norm
-        h = cilindro.height
-        b = cilindro.bottom
-        r = cilindro.radius
+        u = self.normal.unit()
+        h = self.height
+        b = self.bottom
+        r = self.radius
 
-        v = (p0 - b) - ((p0 - b) * u) ** u
-        w = d - (d * u) ** u
+        v = (p0 - b) - ((p0 - b) * u) * u
+        w = d - (d * u) * u
 
         alpha = w * w
         beta = v * w
@@ -100,24 +99,19 @@ class Cylinder:
                 if math.isclose(delta, 0):
                     t1 = -beta / (2 * alpha)
                 else:
-                    t1 = (math.sqrt(delta) - beta) / (2 * a)
-                    t2 = (- math.sqrt(delta) - beta) / (2 * a)
-
-        p1 = None
-        p2 = None
-        if t1:
-            p1 = p0 + d * t1
-        if t2:
-            p2 = p0 + d * t2
+                    t1 = (math.sqrt(delta) - beta) / (2 * alpha)
+                    t2 = (- math.sqrt(delta) - beta) / (2 * alpha)
 
         validp1 = False
+        if t1 is not None:
+            p1 = p0 + d * t1
+            if 0 < (p1 - b) * u < h and t1 >= 0:
+                validp1 = True
         validp2 = False
-
-        if 0 < (p1 - b) * u and (p1 - b) * u < h and t1 >= 0:
-            validp1 = True
-
-        if 0 < (p2 - b) * u and (p2 - b) * u < h and t2 >= 0:
-            validp2 = True
+        if t2 is not None:
+            p2 = p0 + d * t2
+            if 0 < (p2 - b) * u < h and t2 >= 0:
+                validp2 = True
 
         if validp1:
             if validp2:
@@ -128,9 +122,6 @@ class Cylinder:
             else:
                 return t1
         elif validp2:
-            return p2
+            return t2
         else:
             return False
-
-
-
