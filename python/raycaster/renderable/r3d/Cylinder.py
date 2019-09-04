@@ -109,16 +109,28 @@ class Cylinder:
             p1 = p0 + d*t1
         if t2:
             p2 = p0 + d*t2
-        if 0 < (p1-b)*u and (p1-b)*u < h:
-            if 0 < (p2-b)*u and (p2-b)*u < h:
-                if(t1<t2):
-                    return t1
+        
+        validp1 = False
+        validp2 = False
+
+        if 0 < (p1-b)*u and (p1-b)*u < h and t1 >= 0:
+            validp1 = True
+
+        if 0 < (p2-b)*u and (p2-b)*u < h and t2 >= 0:
+            validp2 = True
+
+        if validp1:
+            if validp2:
+                if t1 < t2:
+                    return t1  
                 else:
                     return t2
             else:
                 return t1
-        elif 0 < (p2-b)*u and (p2-b)*u < h:
-            return t2
+        elif validp2:
+            return p2
         else:
             return False
+
+        
 
