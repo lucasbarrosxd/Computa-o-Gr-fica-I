@@ -3,9 +3,11 @@ from python.raycaster.physics import *
 from python.raycaster.observer import Scene, Observer
 from python.raycaster.object.surface import Plane, Cone, Cylinder, Sphere
 # Importar bibliotecas.
-import turtle
+from PIL import Image, ImageDraw, ImageTk
+import time
+import tkinter as tk
 
-# Colors
+# Cores
 mode = 'RGB'
 colors = {
     "white": (255, 255, 255),
@@ -20,11 +22,15 @@ colors = {
     "brown": (94, 77, 41),
     "magenta": (202, 31, 123)
 }
-# Config
-resolution = (50, 50)
+
+# Configurações
+resolution = (500, 500)
+image = Image.new(mode=mode, size=resolution)
+pen = ImageDraw.Draw(image)
+
+# Cenário
 observer = Observer.A(Point(5, 5, 30), Point(5, 5, 27), resolution, size=(7, 7))
 scene = Scene()
-# Scene Objects
 scene.add_obj(Plane(Point(0, 0, 0), Vector(0, 1, 0)), "ground", colors["light_green"])
 scene.add_obj(Sphere(Point(5, 2.5, 5), 2.5), "ball", colors["dark_blue"])
 scene.add_obj(Cylinder.B(Point(0, 0, 10), Point(0, 4, 10), 0.5), "tree_1_trunk", colors["brown"])
@@ -32,24 +38,8 @@ scene.add_obj(Cylinder.B(Point(10, 0, 10), Point(10, 4, 10), 0.5), "tree_2_trunk
 scene.add_obj(Cone(Point(0, 4, 10), Point(0, 7, 10), 1.5), "tree_1_leaves", colors["dark_green"])
 scene.add_obj(Cone(Point(10, 4, 10), Point(10, 7, 10), 1.5), "tree_2_leaves", colors["dark_green"])
 
-
-def onclick(x_index, y_index):
-    # Re-executar o raycast naquela coordenada e mostrar os resultados.
-    print(x_index, y_index)
-
-
-# Objetos básicos para desenho.
-screen = turtle.Screen()
-pen = turtle.Pen()
-# Configurar tela.
-screen.title("RayCaster")
-screen.onclick(onclick, 1, False)
-# Configurar a caneta.
-pen.penup()
-pen.clear()
 # Executar o raycast e desenhar na tela.
 for y_index in range(resolution[1]):
-    pen.setpos(- resolution[0] / 2 + 1, resolution[1] / 2 - 1 - y_index)
     for x_index in range(resolution[0]):
         line = observer.shoot(x_index, y_index)
         min_coef = None
@@ -64,17 +54,63 @@ for y_index in range(resolution[1]):
                     min_obj = obj_name
 
         if min_obj:
-            # Desenhar objeto.
-            color = [i / 255 for i in scene.objects[min_obj][2]]
-            pen.dot(2, color)
+            # Cor a ser desenhada = cor do objeto.
+            color = scene.objects[min_obj][2]
         else:
-            # Desenhar plano de fundo.
-            color = [i / 255 for i in colors["light_blue"]]
-            pen.dot(2, color)
-        pen.forward(1)
+            # Cor a ser desenhada = cor do plano de fundo.
+            color = colors["light_blue"]
 
-# Escutar cliques e avisar à tela que pode executar.
-screen.listen()
-turtle.done()
-# Fechar a tela.
-screen.bye()
+        pen.point((x_index, y_index), color)
+
+# Save image.
+image_path = '../Debug/'
+image_name = time.strftime("%Y-%m-%d %H-%M-%S") + '.png'
+image.save(image_path + image_name)
+
+
+# Setup.
+def onclick(event):
+    # Refazer raycast nas coordenadas do clique.
+    line = observer.shoot(event.x, event.y)
+
+    obj_hits = dict()
+
+    for obj_name in scene.objects:
+        # Check if visibility is enabled for that object.
+        if scene.objects[obj_name][1]:
+            obj_hits[obj_name] = scene.objects[obj_name][0].intersection(line)
+            print("{0} - Tipo: {1} - Estado: {2} - Cor: {3} - Colisão: {4}".format(
+                obj_name,
+                scene.objects[obj_name][0].__class__.__name__,
+                "Visível" if scene.objects[obj_name][1] else "Invisível",
+                scene.objects[obj_name][2],
+                "Não" if obj_hits[obj_name] is None else obj_hits[obj_name]
+            ), sep="", end="\n")
+    min_obj = None
+
+    for obj_hit, obj_coef in obj_hits.items():
+        if min_obj is not None:
+            if obj_coef is not None and obj_hits[min_obj] > obj_coef:
+                min_obj = obj_hit
+        else:
+            if obj_coef is not None:
+                min_obj = obj_hit
+
+    if min_obj is not None:
+        # Cor a ser desenhada = cor do objeto.
+        print("Resultado: {0}".format(min_obj))
+    else:
+        # Cor a ser desenhada = cor do plano de fundo.
+        print("Resultado: Plano de Fundo")
+
+
+root = tk.Tk()
+root.title("RayCaster")
+root.bind("<Button-1>", onclick)
+canvas = tk.Canvas(master=root, width=resolution[0], height=resolution[1])
+canvas.pack()
+# Carregar imagem na janela.
+photo_image = ImageTk.PhotoImage(image, master=root)
+photo_id = canvas.create_image((0, 0), image=photo_image, anchor=tk.NW)
+# Abrir janela.
+root.mainloop()

@@ -6,28 +6,31 @@ from python.raycaster.object.surface import Triangle, Plane, Cone, Cylinder, Sph
 from PIL import Image, ImageDraw
 import time
 
-
+# Cores
 mode = 'RGB'
-white = (255, 255, 255)
-black = (0, 0, 0)
-light_blue = (0, 181, 204)
-dark_blue = (50, 50, 200)
-light_green = (46, 204, 113)
-dark_green = (24, 102, 56)
-red = (255, 0, 0)
-yellow = (247, 202, 24)
-brown = (94, 77, 41)
-magenta = (202, 31, 123)
+colors = {
+    "white": (255, 255, 255),
+    "black": (0, 0, 0),
+    "light_blue": (0, 181, 204),
+    "dark_blue": (50, 50, 200),
+    "light_green": (46, 204, 113),
+    "dark_green": (24, 102, 56),
+    "red": (255, 0, 0),
+    "orange": (255, 165, 0),
+    "yellow": (247, 202, 24),
+    "brown": (94, 77, 41),
+    "magenta": (202, 31, 123)
+}
 
-# Fazer o raycast.
+# Configurações
 res = (500, 500)
 observer_1 = Observer.A(Point(0, 0, 0), Point(5, 0, 0), res, size=(10, 10))
-observer_2 = Observer.A(Point(0, 2.5, 0), Point(5, 2.25, 0), res, size=(8, 8))
+observer_2 = Observer.A(Point(10, 20, 30), Point(9, 18, 26), res, size=(8, 8))
 observer_t = Observer.A(Point(5, 5, 30), Point(5, 5, 27), res, size=(7, 7))
+# Escolher o observador
+observer = observer_2
 
-observer = observer_t
-
-im = Image.new(mode=mode, size=res, color=light_blue)
+im = Image.new(mode=mode, size=res, color=colors["light_blue"])
 draw = ImageDraw.Draw(im)
 
 # Objetos Teste
@@ -90,42 +93,42 @@ cone_2 = Cone(Point(10, 4, 10), Point(10, 7, 10), 1.5)
 
 # Cenário
 scene = Scene()
-scene.add_obj(plane, "ground", light_green)
-scene.add_obj(sphere_1, "building_1", red)
-scene.add_obj(sphere_2, "building_2", white)
-scene.add_obj(sphere_3, "building_3", black)
-scene.add_obj(cyli_1, "tree_trunk_1", brown)
-scene.add_obj(cone_1, "tree_leaves_1", dark_green)
-scene.add_obj(cyli_2, "tree_trunk_2", brown)
-scene.add_obj(cone_2, "tree_leaves_2", dark_green)
-scene.add_obj(t1, "building_1", black)
-scene.add_obj(t2, "building_2", red)
-scene.add_obj(t3, "building_3", dark_green)
-scene.add_obj(t4, "building_4", dark_blue)
-scene.add_obj(t5, "building_5", white)
-scene.add_obj(t6, "building_6", brown)
-scene.add_obj(t7, "building_7", yellow)
-scene.add_obj(t8, "building_8", light_blue)
-scene.add_obj(t9, "building_9", magenta)
-scene.add_obj(t10, "building_10", light_green)
-scene.add_obj(t11, "building_11", yellow)
-scene.add_obj(t12, "building_12", red)
-scene.add_obj(t13, "building_13", white)
-scene.add_obj(t14, "building_14", black)
-scene.add_obj(t15, "building_15", dark_green)
-scene.add_obj(t16, "building_16", light_blue)
-scene.add_obj(t17, "building_17", magenta)
-scene.add_obj(t18, "building_18", yellow)
-scene.add_obj(t19, "building_19", light_green)
-scene.add_obj(t20, "building_20", magenta)
-scene.add_obj(t21, "building_21", dark_blue)
-scene.add_obj(t22, "building_22", white)
-scene.add_obj(t23, "building_23", red)
-scene.add_obj(t24, "building_24", light_blue)
-scene.add_obj(t25, "building_25", magenta)
-scene.add_obj(t26, "building_26", black)
-scene.add_obj(t27, "building_27", dark_green)
-scene.add_obj(t28, "building_28", red)
+scene.add_obj(plane, "ground", colors["light_green"])
+scene.add_obj(sphere_1, "building_1", colors["red"])
+scene.add_obj(sphere_2, "building_2", colors["white"])
+scene.add_obj(sphere_3, "building_3", colors["black"])
+scene.add_obj(cyli_1, "tree_trunk_1", colors["brown"])
+scene.add_obj(cone_1, "tree_leaves_1", colors["dark_green"])
+scene.add_obj(cyli_2, "tree_trunk_2", colors["brown"])
+scene.add_obj(cone_2, "tree_leaves_2", colors["dark_green"])
+scene.add_obj(t1, "building_1", colors["black"])
+scene.add_obj(t2, "building_2", colors["red"])
+scene.add_obj(t3, "building_3", colors["dark_green"])
+scene.add_obj(t4, "building_4", colors["dark_blue"])
+scene.add_obj(t5, "building_5", colors["white"])
+scene.add_obj(t6, "building_6", colors["brown"])
+scene.add_obj(t7, "building_7", colors["yellow"])
+scene.add_obj(t8, "building_8", colors["orange"])
+scene.add_obj(t9, "building_9", colors["magenta"])
+scene.add_obj(t10, "building_10", colors["light_green"])
+scene.add_obj(t11, "building_11", colors["yellow"])
+scene.add_obj(t12, "building_12", colors["red"])
+scene.add_obj(t13, "building_13", colors["white"])
+scene.add_obj(t14, "building_14", colors["black"])
+scene.add_obj(t15, "building_15", colors["dark_green"])
+scene.add_obj(t16, "building_16", colors["orange"])
+scene.add_obj(t17, "building_17", colors["magenta"])
+scene.add_obj(t18, "building_18", colors["yellow"])
+scene.add_obj(t19, "building_19", colors["light_green"])
+scene.add_obj(t20, "building_20", colors["magenta"])
+scene.add_obj(t21, "building_21", colors["dark_blue"])
+scene.add_obj(t22, "building_22", colors["white"])
+scene.add_obj(t23, "building_23", colors["red"])
+scene.add_obj(t24, "building_24", colors["orange"])
+scene.add_obj(t25, "building_25", colors["magenta"])
+scene.add_obj(t26, "building_26", colors["black"])
+scene.add_obj(t27, "building_27", colors["dark_green"])
+scene.add_obj(t28, "building_28", colors["red"])
 
 for x_index in range(observer.panel.res[1]):
     for y_index in range(observer.panel.res[0]):
