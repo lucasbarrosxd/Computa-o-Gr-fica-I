@@ -1,4 +1,7 @@
-# Importar arquivos do mesmo pacote.
+# Importar bibliotecas.
+# # Tipagem.
+from numbers import Real
+# Importar do pacote.
 from . import Point, Vector
 
 
@@ -8,11 +11,11 @@ class Line:
         self.direction = direction
 
     @classmethod
-    def A(cls, origin: Point, direction: Vector) -> "Line":
+    def a(cls, origin: Point, direction: Vector) -> "Line":
         return cls(origin, direction)
 
     @classmethod
-    def B(cls, start: Point, end: Point) -> "Line":
+    def b(cls, start: Point, end: Point) -> "Line":
         return cls(start, end - start)
 
     @property
@@ -31,13 +34,14 @@ class Line:
     def direction(self, value: Vector) -> None:
         self._direction = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "O: {0} V: {1}".format(str(self._origin), str(self._direction))
 
-    def __call__(self, other):
-        # O argumento é um número.
-        if isinstance(other, (int, float, complex)) and not isinstance(other, bool):
-            # Calcular o ponto P tal que P = Origem + Direção * other
+    def __call__(self, other: Real) -> Point:
+        # Verificar tipo do argumento.
+        if isinstance(other, Real):
+            # O argumento é um número real.
+            # Calcular o ponto P tal que P = Origem + Direção * (Coeficiente = other)
             return Point(
                 self._origin.x + self._direction.dx * other,
                 self._origin.y + self._direction.dy * other,
