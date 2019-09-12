@@ -1,12 +1,16 @@
-# Importar arquivos do projeto.
-from python.raycaster.object.surface import Intersectionable
-from python.raycaster.physics import *
 # Importar bibliotecas.
 import math
+# # Tipagem.
+from numbers import Real
+from typing import Optional, Text, Union
+# Importar do projeto.
+from python.raycaster.physics import *
+# Importar do pacote.
+from .. import Surface
 
 
-class Cone(Intersectionable):
-    def __init__(self, bottom: Point, top: Point, radius: float) -> None:
+class Cone(Surface):
+    def __init__(self, bottom: Point, top: Point, radius: Real) -> None:
         self.bottom = bottom
         self.top = top
         self.radius = radius
@@ -37,28 +41,29 @@ class Cone(Intersectionable):
         self._normal = value
 
     @property
-    def height(self) -> float:
+    def height(self) -> Real:
         return self._height
 
     @height.setter
-    def height(self, value: float) -> None:
+    def height(self, value: Real) -> None:
         self._height = value
 
     @property
-    def radius(self) -> float:
+    def radius(self) -> Real:
         return self._radius
 
     @radius.setter
-    def radius(self, value: float) -> None:
+    def radius(self, value: Real) -> None:
         self._radius = value
 
-    def __str__(self):
+    def __str__(self) -> Text:
         return "B: {0} T: {1} n:{2} h: {3} r: {4}".format(self.bottom, self.top, self.normal, self.height, self.radius)
 
-    def __matmul__(self, other):
-        # Argumento é uma reta.
+    def __matmul__(self, other: Line) -> Optional[Real]:
+        # Verificar tipo do argumento.
         if isinstance(other, Line):
-            # Interseção reta-cone.
+            # Argumento é uma reta.
+            # Interseção reta-cone retorna um coeficiente ou nada.
             return Cone.intersection(self, other)
         else:
             raise TypeError(
@@ -66,7 +71,16 @@ class Cone(Intersectionable):
                 .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True):
+    def normal_projection(self, point: Point) -> Optional[Vector]:
+        p1p = point - self.top
+
+        if math.isclose(p1p.norm, 0):
+            return None
+
+        p0p1 = self.top - self.bottom
+        return p1p ** (p1p ** p0p1)
+
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Union[Point, Real]]:
         v = line.direction
         u = self.top - self.bottom
         w = self.bottom - line.origin
@@ -150,6 +164,5 @@ class Cone(Intersectionable):
 
                     return None if (fwrd and t < 0) else (t if coef else line(t))
 
-    @staticmethod
-    def _true_intersection(plane: "Cone", line: Line):
-        pass
+    def _true_intersection(self, line: Line):
+        raise NotImplementedError

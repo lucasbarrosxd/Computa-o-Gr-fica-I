@@ -1,25 +1,27 @@
-# Importar do pacote.
-from .. import Intersectionable
-from . import Plane
-# Importar do projeto.
-from python.raycaster.physics import *
 # Importar bibliotecas.
 import math
-from typing import Union
+# # Tipagem.
+from numbers import Real
+from typing import Optional, Text, Union
+# Importar do projeto.
+from python.raycaster.physics import *
+# Importar do pacote.
+from .. import Surface
+from . import Plane
 
 
-class Circle(Intersectionable):
-    def __init__(self, center: Point, normal: Vector, radius: float) -> None:
+class Circle(Surface):
+    def __init__(self, center: Point, normal: Vector, radius: Real) -> None:
         self.center = center
         self.normal = normal
         self.radius = radius
 
     @classmethod
-    def A(cls, center: Point, normal: Vector, radius: float) -> "Circle":
+    def a(cls, center: Point, normal: Vector, radius: Real) -> "Circle":
         return cls(center, normal, radius)
 
     @classmethod
-    def B(cls, plane: Plane, radius: float) -> "Circle":
+    def b(cls, plane: Plane, radius: Real) -> "Circle":
         return cls(plane.origin, plane.normal, radius)
 
     @property
@@ -39,20 +41,21 @@ class Circle(Intersectionable):
         self._normal = value
 
     @property
-    def radius(self) -> float:
+    def radius(self) -> Real:
         return self._radius
 
     @radius.setter
-    def radius(self, value: float) -> None:
+    def radius(self, value: Real) -> None:
         self._radius = value
 
-    def __str__(self):
+    def __str__(self) -> Text:
         return "O: {0} N: {1} r: {2}".format(self.center, self.normal, self.radius)
 
-    def __matmul__(self, other):
-        # Argumento é uma reta.
+    def __matmul__(self, other: Line) -> Optional[Real]:
+        # Verificar tipo do argumento.
         if isinstance(other, Line):
-            # Interseção reta-círculo.
+            # Argumento é uma reta.
+            # Interseção reta-círculo retorna um coeficiente ou nada.
             return Circle.intersection(self, other)
         else:
             raise TypeError(
@@ -60,7 +63,10 @@ class Circle(Intersectionable):
                 .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
+    def normal_projection(self, point: Point) -> Optional[Vector]:
+        return self.normal
+
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Union[Point, Real]]:
         v = line.direction
         n = self.normal
         prpl = self.center - line.origin
@@ -145,7 +151,7 @@ class Circle(Intersectionable):
                     return line(- b / (2 * a))
                 else:
                     # A reta atravessa o círculo. Retornar um segmento de reta.
-                    return Line.B(line((- b - math.sqrt(delta)) / (2 * a)), line((- b + math.sqrt(delta)) / (2 * a)))
+                    return Line.b(line((- b - math.sqrt(delta)) / (2 * a)), line((- b + math.sqrt(delta)) / (2 * a)))
             else:
                 # Não está sobre o plano do círculo. Não há interseção.
                 return None

@@ -1,13 +1,15 @@
-# Importar do pacote.
-from .. import Intersectionable
-# Importar do projeto.
-from python.raycaster.physics import *
 # Importar bibliotecas.
 import math
-from typing import Optional
+# # Tipagem.
+from numbers import Real
+from typing import Optional, Text, Union
+# Importar do projeto.
+from python.raycaster.physics import Point, Vector, Line
+# Importar do pacote.
+from .. import Surface
 
 
-class Triangle(Intersectionable):
+class Triangle(Surface):
     def __init__(self, point_1: Point, point_2: Point, point_3: Point) -> None:
         self.point_1 = point_1
         self.point_2 = point_2
@@ -37,13 +39,14 @@ class Triangle(Intersectionable):
     def point_3(self, value: Point) -> None:
         self._point_3 = value
 
-    def __str__(self) -> str:
+    def __str__(self) -> Text:
         return "{0} {1} {2}".format(self.point_1, self.point_2, self.point_3)
 
-    def __matmul__(self, other):
-        # Argumento é uma reta.
+    def __matmul__(self, other: Line) -> Optional[Real]:
+        # Verificar tipo do argumento.
         if isinstance(other, Line):
-            # Interseção reta-triângulo.
+            # Argumento é uma reta.
+            # Interseção reta-triângulo retorna um coeficiente ou nada.
             return Triangle.intersection(self, other)
         else:
             raise TypeError(
@@ -51,30 +54,34 @@ class Triangle(Intersectionable):
                 .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Point]:
+    def normal_projection(self, point: Point) -> Optional[Vector]:
+        return Vector.b(self.point_1, self.point_2) ** Vector.b(self.point_1, self.point_3)
+
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Union[Point, Real]]:
         p1p2 = self.point_2 - self.point_1
-        p2p3 = self.point_3 - self.point_2
         p1p3 = self.point_3 - self.point_1
 
-        v = line.direction
         n = p1p2 ** p1p3
-        prpl = self.point_1 - line.origin
 
         # Cálculos repetidos.
-        v_scalar_n = v * n
+        v_scalar_n = line.direction * n
+        prpl_scalar_n = (self.point_1 - line.origin) * n
 
-        # Verificar se o plano e a reta são perpendiculares.
+        # Verificar se o plano e a reta são paralelos.
         if not math.isclose(v_scalar_n, 0):
-            # Não são perpendiculares. Há uma única interseção.
-            t = (prpl * n) / v_scalar_n
+            # Não são paralelos. Há no máximo uma única interseção.
+            t = prpl_scalar_n / v_scalar_n
+            if fwrd and t < 0:
+                # A interseção ocorre atrás da reta.
+                return None
         else:
-            # São perpendiculares.
-            if math.isclose(prpl * n, 0):
-                # A reta está sobre o plano. A interseção é a própria reta. Retornar a origem da reta.
+            # São paralelos.
+            if math.isclose(prpl_scalar_n, 0):
+                # A reta está sobre o plano. A interseção é a própria reta. #FIX
                 t = 0
             else:
-                # A reta é paralela ao plano. Não há interseção.
-                t = None
+                # A reta é paralela ao plano, mas não está sobre ele. Não há interseção.
+                return None
 
         if t is None or (fwrd and t < 0):
             return None
@@ -82,6 +89,7 @@ class Triangle(Intersectionable):
             # Validar triângulo.
             p = line(t)
 
+            p2p3 = self.point_3 - self.point_2
             p1p = p - self.point_1
             p2p = p - self.point_2
             p3p = p - self.point_3

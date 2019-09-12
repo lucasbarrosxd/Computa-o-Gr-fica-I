@@ -1,5 +1,6 @@
 # Barros
 /.idea/
+/.vs/
 /Aulas/
 __pycache__/
 /Debug/

@@ -1,14 +1,16 @@
-# Importar do pacote.
-from python.raycaster.object.surface import Intersectionable
-# Importar do projeto.
-from python.raycaster.physics import *
 # Importar bibliotecas.
 import math
-from typing import Union
+# # Tipagem.
+from numbers import Real
+from typing import Optional, Text, Union
+# Importar do projeto.
+from python.raycaster.physics import *
+# Importar do pacote.
+from python.raycaster.object.surface import Surface
 
 
-class Sphere(Intersectionable):
-    def __init__(self, center: Point, radius: float) -> None:
+class Sphere(Surface):
+    def __init__(self, center: Point, radius: Real) -> None:
         self.center = center
         self.radius = radius
 
@@ -21,28 +23,32 @@ class Sphere(Intersectionable):
         self._center = value
 
     @property
-    def radius(self) -> float:
+    def radius(self) -> Real:
         return self._radius
 
     @radius.setter
-    def radius(self, value: float) -> None:
+    def radius(self, value: Real) -> None:
         self._radius = value
 
-    def __str__(self):
+    def __str__(self) -> Text:
         return "O: {0} r: {1}".format(self.center, self.radius)
 
-    def __matmul__(self, other):
-        # Argumento é uma reta.
+    def __matmul__(self, other: Line) -> Optional[Real]:
+        # Verificar tipo do argumento.
         if isinstance(other, Line):
-            # Interseção reta-esfera.
+            # Argumento é uma reta.
+            # Interseção reta-esfera retorna um coeficiente ou nada.
             return Sphere.intersection(self, other)
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para interseção com objetos de tipo '{1}'."
-                    .format(self.__class__.__name__, type(other))
+                .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
+    def normal_projection(self, point: Point) -> Optional[Vector]:
+        return Vector.b(self.center, point)
+
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Union[Point, Real]]:
         v = line.direction
         prpo = self.center - line.origin
 

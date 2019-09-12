@@ -1,13 +1,15 @@
-# Importar do pacote.
-from python.raycaster.object.surface import Intersectionable
-# Importar do projeto.
-from python.raycaster.physics import Point, Vector, Line
 # Importar bibliotecas.
 import math
-from typing import Union
+# # Tipagem.
+from numbers import Real
+from typing import Optional, Text, Union
+# Importar do projeto.
+from python.raycaster.physics import Point, Vector, Line
+# Importar do pacote.
+from .. import Surface
 
 
-class Plane(Intersectionable):
+class Plane(Surface):
     def __init__(self, origin: Point, normal: Vector) -> None:
         self.origin = origin
         self.normal = normal
@@ -28,13 +30,14 @@ class Plane(Intersectionable):
     def normal(self, value: Vector) -> None:
         self._normal = value
 
-    def __str__(self):
+    def __str__(self) -> Text:
         return "O: {0} N: {1}".format(self.origin, self.normal)
 
-    def __matmul__(self, other):
-        # Argumento é uma reta.
+    def __matmul__(self, other: Line) -> Optional[Real]:
+        # Verificar tipo do argumento.
         if isinstance(other, Line):
-            # Interseção reta-plano.
+            # Argumento é uma reta.
+            # Interseção reta-plano retorna um coeficiente ou nada.
             return Plane.intersection(self, other)
         else:
             raise TypeError(
@@ -42,7 +45,10 @@ class Plane(Intersectionable):
                 .format(self.__class__.__name__, type(other))
             )
 
-    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Union[None, Point, float]:
+    def normal_projection(self, point: Point) -> Optional[Vector]:
+        return self.normal
+
+    def intersection(self, line: Line, coef: bool = True, fwrd: bool = True) -> Optional[Union[Point, Real]]:
         v = line.direction
         n = self.normal
         prpl = self.origin - line.origin
