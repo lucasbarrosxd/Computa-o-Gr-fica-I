@@ -5,7 +5,7 @@ from typing import Tuple
 # Importar do projeto.
 from python.raycaster.physics import Point, Line
 # Importar do pacote.
-from . import Panel
+from .Panel import Panel
 
 
 class Observer:
