@@ -66,20 +66,28 @@ class RGB:
                 .format(self.__class__.__name__, type(other))
             )
 
-    __radd__ = __add__
-
     def __mul__(self, other: Union["RGB", Real]) -> "RGB":
         # Verificar tipo do argumento.
         if isinstance(other, RGB):
             # Argumento é uma cor.
             # Multiplicação dos componentes de cada cor é uma cor.
-            return RGB(self.r * other.r / 255, self.g * other.g / 255, self.b * other.b / 255)
+            return RGB(
+                round(self.r * other.r / 255),
+                round(self.g * other.g / 255),
+                round(self.b * other.b / 255)
+            )
         elif isinstance(other, Real):
             # Argumento é um número real.
             # Multiplicação dos componentes da cor por um coeficiente.
-            return RGB(self.r * other, self.g * other, self.b * other)
+            return RGB(
+                round(self.r * other),
+                round(self.g * other),
+                round(self.b * other)
+            )
         else:
             raise TypeError(
                 "Classe '{0}' não possui suporte para multiplicação com objetos de tipo '{1}'."
                 .format(self.__class__.__name__, type(other))
             )
+
+    __rmul__ = __mul__
