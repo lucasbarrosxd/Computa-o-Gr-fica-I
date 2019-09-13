@@ -1,0 +1,63 @@
+Normal ponto-cilindro
+
+Dados um cilindro C = (P0, P1, r) e um ponto P que está sobre a superfície desse cilindro, calcular o vetor normal N do
+cilindro que passa por esse ponto.
+
+SOLUÇÃO:
+
+O cilindro pode ser dividido em infinitos círculos. O vetor normal é o vetor que sai do centro de um desses círculos
+em direção ao ponto P sobre a superfície.
+
+Logo, o vetor normal é o vetor P'P, onde P' é a projeção do ponto P sobre a reta R = (P0, P0P1).
+
+    N = P'P
+    N = P - P'
+
+Temos o ponto P. Precisamos encontrar o ponto P'. Da interseção reta-cilindro temos as seguintes equações:
+
+(1) P = Pr + t * v               // Equação da reta para o ponto de interseção.
+(2) P' = P0 + s * (u = P0P1)     // Equação da reta para a projeção do ponto de interseção.
+(3) ||PP'|| = r                  // Distância entre a interseção e a projeção é igual ao raio.
+(4) P'P • u = 0                  // Vetores P'P e P0P1 são perpendiculares.
+(*) 0 <= s <= 1                  // Garantir que a interseção é na parte desejada e não no cilindro infinito.
+
+Já temos o ponto P, então (1) não é necessária. Além disso, assumimos que P está sobre a superfície do cilindro, logo
+(3) e (5) também não são necessárias. Caso uma verificação de que o ponto está sobre a superfície do cilindro seja
+necessária, basta calcular (3) e (5).
+
+Podemos começar solucionando (4):
+
+(4) P'P • u = 0
+    (P - P') • u = 0
+    (P - P0 - s * u) • u = 0     // Substituindo por (2).
+    (P0P - s * u) • u = 0
+    P0P • u - s * u • u = 0
+    P0P • u = s * u • u
+    s = P0P • u / u • u          ⬌ u ≠ 0
+
+Substituindo s em (2):
+
+(2) P' = P0 + s * u
+    P' = P0 + (P0P • u / u • u) * u     ⬌ u ≠ 0
+
+Sabemos que o vetor normal é o vetor P'P, podemos substituir P':
+
+    N = P'P
+    N = P - P'
+    N = P - P0 - (P0P • u / u • u) * u     ⬌ u ≠ 0
+    N = P0P - (P0P • u / u • u) * u     ⬌ u ≠ 0
+
+No caso em que u = 0, podemos resolver (2):
+
+(2) P' = P0 + s * u
+    P' = P0 + s * 0
+    P' = P0
+
+Substituindo na equação N = P'P:
+
+    N = P'P
+    N = P - P'
+    N = P - P0
+    N = P0P
+
+Note que o comportamento no caso u = 0 é o mesmo para a normal ponto-esfera, onde P0 = P1 = o centro da esfera.

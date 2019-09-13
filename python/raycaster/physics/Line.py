@@ -1,6 +1,7 @@
 # Importar bibliotecas.
 # # Tipagem.
 from numbers import Real
+from typing import Text
 # Importar do pacote.
 from . import Point, Vector
 
@@ -34,7 +35,7 @@ class Line:
     def direction(self, value: Vector) -> None:
         self._direction = value
 
-    def __str__(self) -> str:
+    def __str__(self) -> Text:
         return "O: {0} V: {1}".format(str(self._origin), str(self._direction))
 
     def __call__(self, other: Real) -> Point:

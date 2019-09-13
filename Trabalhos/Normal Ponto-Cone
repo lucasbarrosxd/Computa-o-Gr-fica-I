@@ -1,0 +1,29 @@
+Normal ponto-cone
+
+Dados um cone C = (P0, P1, r) e um ponto P que está sobre a superfície desse cone, calcular o vetor normal N do cone
+que passa por esse ponto.
+
+SOLUÇÃO:
+
+Diferente do cilindro, não é possível dividir o cone em infinitos círculos. É necessário definir sua normal de outra
+maneira.
+
+Uma das forma de fazê-lo é definir o vetor normal como o vetor perpendicular ao vetor da geratriz da superfície do
+cone e ao vetor tangencial à superfície. Desses vetores, o primeiro que podemos determinar é o da geratriz, que podemos
+determinar a partir do ponto de interseção P até o topo do cone.
+
+    g = P1P        ⬌ P ≠ P1
+    g = P - P1     ⬌ P ≠ P1
+
+Note que se a interseção ocorrer no ponto P1, é impossível determinar a geratriz.
+
+Agora que já temos o vetor geratriz, é possível determinar o vetor tangente através do produto vetorial entre o vetor
+geratriz e o vetor P0P1, onde P0 é a base do cone e P1 é o top do cone:
+
+    t = g ⨯ P0P1                 ⬌ P0 ≠ P1
+    t = (P - P1) ⨯ (P1 - P0)     ⬌ P ≠ P1 ≠ P0
+
+Para encontrar a normal basta calcular o produto vetorial entre os vetores g e t:
+
+    n = g ⨯ t
+    n = P1P ⨯ (P1P ⨯ P0P1)       ⬌ P ≠ P0 ≠ P1

@@ -1,1 +1,1 @@
-from .Texturable import Texturable
+from .Texture import Texture
