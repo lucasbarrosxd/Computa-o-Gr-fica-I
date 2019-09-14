@@ -1,6 +1,6 @@
 # Importar arquivos do projeto.
 from python.raycaster.physics import *
-from python.raycaster.observer import Scene, Observer
+from python.raycaster.scene import Scene, Observer
 from python.raycaster.object.surface import Triangle, Plane, Cone, Cylinder, Sphere
 # Importar bibliotecas.
 from PIL import Image, ImageDraw

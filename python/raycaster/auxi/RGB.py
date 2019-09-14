@@ -1,7 +1,7 @@
 # Importar bibliotecas.
 # # Tipagem.
 from numbers import Integral, Real
-from typing import Tuple, Union
+from typing import Text, Tuple, Union
 
 
 class RGB:
@@ -91,3 +91,6 @@ class RGB:
             )
 
     __rmul__ = __mul__
+
+    def __str__(self) -> Text:
+        return "({0}, {1}, {2})".format(self.r, self.g, self.b)
